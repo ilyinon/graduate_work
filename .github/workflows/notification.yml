@@ -1,0 +1,72 @@
+name: UGC
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  linter:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@master
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r  'requirements_ci.txt'
+        pip install -r 'consumer/requirements.txt'
+        pip install -r 'producer/requirements.txt'
+        pip install -r 'adminka/requirements.txt'
+        pip install -r 'scheduler/requirements.txt'
+        pip install -r 'worker/requirements.txt'
+        pip install -r 'ws/requirements.txt'
+        pip install -r 'links/requirements.txt'
+
+    - name: Check sort imports with isort
+      run: |
+        isort --check-only producer
+        isort --check-only consumer
+        isort --check-only adminka
+        isort --check-only scheduler
+        isort --check-only worker
+        isort --check-only ws
+        isort --check-only links
+
+    - name: Check with Flake8
+      run: |
+        flake8 --exit-zero producer
+        flake8 --exit-zero consumer
+        flake8 --exit-zero adminka
+        flake8 --exit-zero scheduler
+        flake8 --exit-zero worker
+        flake8 --exit-zero ws
+        flake8 --exit-zero links
+
+    - name: Send Telegram notification on success
+      if: success() # Only run if the previous steps were successful
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: "✅ Build successful for ${{ github.repository }} (${{ github.ref }}) ${{ github.event.pull_request.title }}"
+
+    - name: Send Telegram notification on failure
+      if: failure() # Only run if the previous steps were failure
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_CHAT_ID }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        message: "❌ Build failed for ${{ github.repository }} (${{ github.ref }}) ${{ github.event.pull_request.title }}"

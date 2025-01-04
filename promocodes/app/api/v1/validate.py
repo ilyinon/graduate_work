@@ -23,9 +23,10 @@ async def validate_promocode(promocode: str, db: Session = Depends(get_session))
     try:
         result = await db.execute(select(Promocodes).where(Promocodes.promocode == promocode))
         promocode = result.scalars().first()
+        logger.info(f"promocode from db: {promocode.promocode}")
     except:
         promocode = None
-    logger.info(f"promocode from db: {promocode}")
+    
 
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
@@ -41,7 +42,7 @@ async def validate_promocode(promocode: str, db: Session = Depends(get_session))
         raise HTTPException(status_code=400, detail="Достигнут лимит использований промокода")
 
     return {
-        "code": promocode.code,
+        "code": promocode.promocode,
         "discount_percent": promocode.discount_percent,
-        "fixed_discount": promocode.fixed_discount
+        "discount_rubles": promocode.discount_rubles
     }

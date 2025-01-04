@@ -17,11 +17,13 @@ from datetime import datetime, timedelta, timezone
 router = APIRouter()
 
 @router.post("/{promocode}")
-async def revoke_promocode(code: str, db: Session = Depends(get_session)):
-    promocode = db.query(Promocodes).filter_by(promocode=promocode).first()
+async def revoke_promocode(promocode: str, db: Session = Depends(get_session)):
+    logger.info(f"promocode from request: {promocode}")
+    result = await db.execute(select(Promocodes).where(Promocodes.promocode == promocode))
+    promocode = result.scalars().first()
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
     if promocode.used_count > 0:
         promocode.used_count -= 1
-        db.commit()
+        await db.commit()
     return {"detail": "Использование промокода отменено"}

@@ -19,9 +19,11 @@ router = APIRouter()
 
 @router.post("/{promocode}")
 async def apply_promocode(promocode: str, db: Session = Depends(get_session)):
-    promocode = db.query(Promocodes).filter_by(promocode=promocode).first()
+    logger.info(f"promocode from request: {promocode}")
+    result = await db.execute(select(Promocodes).where(Promocodes.promocode == promocode))
+    promocode = result.scalars().first()
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
     promocode.used_count += 1
-    db.commit()
+    await db.commit()
     return {"detail": "Промокод успешно применен"}

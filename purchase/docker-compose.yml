@@ -1,0 +1,31 @@
+services:
+
+  purchase:
+    build: purchase
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    healthcheck:
+      test: bash -c "exec 6<> /dev/tcp/localhost/8000"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    depends_on:
+      db_auth:
+        condition: service_healthy
+        restart: true
+      # purchase_migrate:
+      #   condition: service_completed_successfully
+    ports: []
+
+  # purchase_migrate:
+  #   build: purchase/app
+  #   command: alembic upgrade head
+  #   restart: on-failure
+  #   env_file:
+  #     - ./.env
+  #   # restart: unless-stopped
+  #   depends_on:
+  #     db_auth:
+  #       condition: service_healthy
+  #       restart: true

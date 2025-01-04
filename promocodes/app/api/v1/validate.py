@@ -17,9 +17,16 @@ from datetime import datetime, timedelta, timezone
 router = APIRouter()
 
 
-@router.get("/{code}")
-def validate_promocode(code: str, db: Session = Depends(get_session)):
-    promocode = db.query(Promocodes).filter_by(code=code).first()
+@router.get("/{promocode}")
+async def validate_promocode(promocode: str, db: Session = Depends(get_session)):
+    logger.info(f"promocode from request: {promocode}")
+    try:
+        result = await db.execute(select(Promocodes).where(Promocodes.promocode == promocode))
+        promocode = result.scalars().first()
+    except:
+        promocode = None
+    logger.info(f"promocode from db: {promocode}")
+
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
     if not promocode.is_active:

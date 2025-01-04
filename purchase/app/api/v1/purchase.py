@@ -9,17 +9,24 @@ from typing import Annotated, List, Literal, LiteralString, Optional, Union
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter, Depends, HTTPException, status
-
+import random
+from uuid import UUID
+from sqlalchemy import select
 
 
 router = APIRouter()
 
 @router.post("/")
-def create_purchase(user_id: int, tariff_id: int, promocode: Optional[str] = None, db: Session = Depends(get_session)):
-    user = db.query(User).filter_by(id=user_id).first()
+async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[str] = None, db: Session = Depends(get_session)):
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    # user = db.query(User).filter_by(id=user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
-    tariff = db.query(Tariff).filter_by(id=tariff_id).first()
+    result = await db.execute(select(Tariff).where(Tariff.id == tariff_id))
+    # tariff = db.query(Tariff).filter_by(id=tariff_id).first()
+    tariff = result.scalars().first()
+
     if not tariff:
         raise HTTPException(status_code=404, detail="Тариф не найден")
 
@@ -60,7 +67,6 @@ def create_purchase(user_id: int, tariff_id: int, promocode: Optional[str] = Non
     if payment_successful:
         purchase.is_successful = True
         db.commit()
-        # Сообщаем сервису промокодов об успешном применении промокода
         if promocode:
             try:
                 response = requests.post(f"{purchase_settings.promocode_service_url}/apply/{promocode}")
@@ -68,27 +74,26 @@ def create_purchase(user_id: int, tariff_id: int, promocode: Optional[str] = Non
             except requests.HTTPError as e:
                 # Логируем ошибку, но не прерываем выполнение
                 pass
-        # Предоставляем доступ к тарифу и т.д.
-        # ...
+
 
         return {"detail": "Покупка успешно совершена", "amount": amount}
 
     else:
-        # В случае неудачной оплаты
         purchase.failure_reason = "Ошибка оплаты"
         db.commit()
-        # Отменяем применение промокода, если он был использован
         if promocode:
             try:
                 response = requests.post(f"{purchase_settings.promocode_service_url}/revoke/{promocode}")
                 response.raise_for_status()
             except requests.HTTPError as e:
-                # Логируем ошибку
                 pass
         raise HTTPException(status_code=400, detail="Ошибка оплаты")
 
 
 def process_payment(user_id: int, amount: float) -> bool:
-    # Интеграция с платежной системой
-    # Здесь эмуляция успешной оплаты
-    return True
+    """ Emulate payment. 90% is successfull"""
+    chance = random.randint(1, 100)
+    if chance <= 90:
+        return True
+    else:
+        return False

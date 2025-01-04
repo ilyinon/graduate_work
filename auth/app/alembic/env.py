@@ -8,6 +8,7 @@ from models.user import User
 from models.role import Role, UserRole
 from models.token import Token
 from models.session import Session
+from models.purchase import Tariff, UserTariff, Purchase
 
 config = context.config
 

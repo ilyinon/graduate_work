@@ -6,6 +6,7 @@ services:
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DB}
     volumes:
       - pg_data:/var/lib/postgresql/data
       # - ./admin/database_dump.sql:/docker-entrypoint-initdb.d/init.sql

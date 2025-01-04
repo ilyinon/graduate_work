@@ -8,14 +8,13 @@ import requests
 from typing import Annotated, List, Literal, LiteralString, Optional, Union
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from graduate_work.purchase.app.api.v1 import purchase
 from fastapi import APIRouter, Depends, HTTPException, status
 
 
 
 router = APIRouter()
 
-@router.post("/api/v1/purchase/")
+@router.post("/")
 def create_purchase(user_id: int, tariff_id: int, promocode: Optional[str] = None, db: Session = Depends(get_session)):
     user = db.query(User).filter_by(id=user_id).first()
     if not user:

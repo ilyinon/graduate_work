@@ -5,8 +5,12 @@ from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, St
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from pydantic import EmailStr
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.orm import relationship
+from werkzeug.security import check_password_hash, generate_password_hash
 
-Base = declarative_base()
+ModelBase = declarative_base()
 
 
 class IdMixin(object):
@@ -18,12 +22,7 @@ class TimestampMixin(object):
     modified = Column(DateTime, onupdate=datetime.now(), default=datetime.now())
 
 
-from models.base import ModelBase
-from models.mixin import IdMixin, TimestampMixin
-from pydantic import EmailStr
-from sqlalchemy import Column, ForeignKey, String
-from sqlalchemy.orm import relationship
-from werkzeug.security import check_password_hash, generate_password_hash
+
 
 
 class User(ModelBase, TimestampMixin, IdMixin):
@@ -35,7 +34,7 @@ class User(ModelBase, TimestampMixin, IdMixin):
     full_name = Column(String(255))
 
 
-class Tariff(Base, IdMixin, TimestampMixin):
+class Tariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "tariffs"
 
     name = Column(String)
@@ -43,7 +42,7 @@ class Tariff(Base, IdMixin, TimestampMixin):
     price = Column(Float, nullable=False)
 
 
-class Purchase(Base, IdMixin, TimestampMixin):
+class Purchase(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "purchases"
 
     user_id = Column(Integer, ForeignKey("users.id"))

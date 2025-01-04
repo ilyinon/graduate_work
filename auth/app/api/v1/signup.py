@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import HTTPBearer, OAuth2AuthorizationCodeBearer
 from schemas.base import HTTPExceptionResponse, HTTPValidationError
-from schemas.user import UserCreate, UserResponse
+from schemas.user import UserCreate, UserResponse, UserRegisterResponse
 from services.user import UserService, get_user_service
 
 get_token = HTTPBearer(auto_error=False)
@@ -20,7 +20,7 @@ router = APIRouter()
 
 @router.post(
     "/signup",
-    response_model=UserResponse,
+    response_model=UserRegisterResponse,
     summary="User registration",
     responses={
         status.HTTP_400_BAD_REQUEST: {"model": HTTPExceptionResponse},
@@ -36,9 +36,10 @@ async def signup(
     """
     logger.info(f"Requested /signup with {user_create}")
     if not await user_service.get_user_by_email(user_create.email):
-        if not await user_service.get_user_by_username(user_create.username):
-            created_new_user = await user_service.create_user(user_create)
-            return created_new_user
+        user_create.username = await user_service.create_user_username()
+
+        created_new_user = await user_service.create_user(user_create)
+        return created_new_user
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail="The email or username is already in use",

@@ -1,7 +1,7 @@
 from typing import Annotated, List, Literal, LiteralString, Optional, Union
 
 import requests
-from api.v1 import purchases
+from api.v1 import purchase
 from core.config import purchase_settings
 from db.pg import get_session
 from fastapi import Depends, FastAPI, HTTPException
@@ -33,4 +33,4 @@ app.add_middleware(
 )
 
 
-app.include_router(purchases.router, prefix="/api/v1/auth")
+app.include_router(purchase.router, prefix="/api/v1/purchase")

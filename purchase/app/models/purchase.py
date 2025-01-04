@@ -18,8 +18,8 @@ class IdMixin(object):
 
 
 class TimestampMixin(object):
-    created = Column(DateTime, default=datetime.now())
-    modified = Column(DateTime, onupdate=datetime.now(), default=datetime.now())
+    created_at = Column(DateTime, default=datetime.now())
+    modified_at = Column(DateTime, onupdate=datetime.now(), default=datetime.now())
 
 
 class User(ModelBase, TimestampMixin, IdMixin):
@@ -47,8 +47,8 @@ class UserTariff(ModelBase, IdMixin, TimestampMixin):
         UUID(as_uuid=True), ForeignKey("tariffs.id", ondelete="CASCADE"), nullable=False
     )
 
-    tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
-    user = relationship("User", back_populates="roles", lazy="selectin")
+    # tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
+    # user = relationship("User", back_populates="roles", lazy="selectin")
 
 class Purchase(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "purchases"
@@ -64,5 +64,5 @@ class Purchase(ModelBase, IdMixin, TimestampMixin):
     failure_reason = Column(String, nullable=True)
     promocode_code = Column(String, nullable=True)
 
-    tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
-    user = relationship("User", back_populates="roles", lazy="selectin")
+    # tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
+    # user = relationship("User", back_populates="roles", lazy="selectin")

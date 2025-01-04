@@ -12,19 +12,22 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import random
 from uuid import UUID
 from sqlalchemy import select
+from core.logger import logger
 
 
 router = APIRouter()
 
 @router.post("/")
 async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[str] = None, db: Session = Depends(get_session)):
+    logger.info(f"Request to buy from - user_id: {user_id}, tariff_id: {tariff_id}, promocode: {promocode}")
+
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()
-    # user = db.query(User).filter_by(id=user_id).first()
+    logger.info(f"user: {user.id}")
+
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     result = await db.execute(select(Tariff).where(Tariff.id == tariff_id))
-    # tariff = db.query(Tariff).filter_by(id=tariff_id).first()
     tariff = result.scalars().first()
 
     if not tariff:
@@ -57,16 +60,19 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
             raise HTTPException(status_code=400, detail=f"Ошибка промокода: {detail}")
 
     # Создаем запись о покупке
+
     purchase = Purchase(user_id=user_id, tariff_id=tariff_id, amount=amount, promocode_code=promocode)
     db.add(purchase)
-    db.commit()
+    await db.commit()
+    await db.refresh(purchase)
+    logger.info(f"purchase: {purchase.id}")
 
     # Обработка оплаты (эмуляция)
-    payment_successful = process_payment(user_id, amount)
+    payment_result = await process_payment(user_id, amount)
 
-    if payment_successful:
+    if payment_result:
         purchase.is_successful = True
-        db.commit()
+        await db.commit()
         if promocode:
             try:
                 response = requests.post(f"{purchase_settings.promocode_service_url}/apply/{promocode}")
@@ -80,7 +86,7 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
 
     else:
         purchase.failure_reason = "Ошибка оплаты"
-        db.commit()
+        await db.commit()
         if promocode:
             try:
                 response = requests.post(f"{purchase_settings.promocode_service_url}/revoke/{promocode}")
@@ -90,7 +96,7 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
         raise HTTPException(status_code=400, detail="Ошибка оплаты")
 
 
-def process_payment(user_id: int, amount: float) -> bool:
+async def process_payment(user_id: int, amount: float) -> bool:
     """ Emulate payment. 90% is successfull"""
     chance = random.randint(1, 100)
     if chance <= 90:

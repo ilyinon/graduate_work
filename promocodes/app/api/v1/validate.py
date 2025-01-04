@@ -1,7 +1,25 @@
+from fastapi import FastAPI, HTTPException, Depends
+from models.promocodes import Promocodes
+from sqlalchemy.orm import Session
+from db.pg import get_session
+from core.config import promocodes_settings
+import requests
+from typing import Annotated, List, Literal, LiteralString, Optional, Union
+from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter, Depends, HTTPException, status
+import random
+from uuid import UUID
+from sqlalchemy import select
+from core.logger import logger
+from datetime import datetime, timedelta, timezone
 
-@app.get("/api/v1/promocodes/validate/{code}")
-def validate_promocode(code: str, db: Session = Depends(get_db)):
-    promocode = db.query(PromoCode).filter_by(code=code).first()
+router = APIRouter()
+
+
+@router.get("/{code}")
+def validate_promocode(code: str, db: Session = Depends(get_session)):
+    promocode = db.query(Promocodes).filter_by(code=code).first()
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
     if not promocode.is_active:

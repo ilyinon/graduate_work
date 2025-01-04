@@ -20,6 +20,15 @@ purchase: purchase_dir
 purchase_dir:
 	@:
 
+promocodes: promocodes_dir
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
+	-f promocodes/docker-compose.yml -f promocodes/docker-compose.override.yml \
+	up -d --build
+	docker logs -f graduate_work-promocodes-1
+
+promocodes_dir:
+	@:
+
 search: search_dir
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
 	-f search/app/docker-compose.yml -f search/app/docker-compose.override.yml \

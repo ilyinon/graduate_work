@@ -1,18 +1,16 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from uuid import uuid4
-from sqlalchemy import Column, DateTime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+from pydantic import EmailStr
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.orm import relationship
+from werkzeug.security import check_password_hash, generate_password_hash
 
-Base = declarative_base()
-
-
-
-
-
-
+ModelBase = declarative_base()
 
 
 class IdMixin(object):
@@ -24,22 +22,27 @@ class TimestampMixin(object):
     modified = Column(DateTime, onupdate=datetime.now(), default=datetime.now())
 
 
-class User(Base, IdMixin):
+
+
+
+class User(ModelBase, TimestampMixin, IdMixin):
     __tablename__ = "users"
 
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
-    purchases = relationship("Purchase", back_populates="user")
+    email = Column(String(255), unique=True, nullable=False)
+    username = Column(String(255), unique=True)
+    hashed_password = Column(String(255), nullable=False)
+    full_name = Column(String(255))
 
-class Tariff(Base, IdMixin, TimestampMixin):
+
+class Tariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "tariffs"
 
     name = Column(String)
     description = Column(String)
-    price = Column(Float)
+    price = Column(Float, nullable=False)
 
-class Purchase(Base, IdMixin, TimestampMixin):
+
+class Purchase(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "purchases"
 
     user_id = Column(Integer, ForeignKey("users.id"))

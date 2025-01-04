@@ -1,6 +1,7 @@
 .env
 .DS_Store
 **/__pycache__/
+**/node_modules/
 movies_admin/config/.env
 venv/
 *.py[cod]

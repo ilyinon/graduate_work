@@ -14,6 +14,7 @@ from schemas.user import UserCreate, UserPatch, UserResponse, UserResponseLogin
 from services.database import BaseDb, PostgresqlEngine
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.generate_password import generate_password
+import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,12 @@ class UserService:
         if user:
             return UserResponseLogin.from_orm(user)
         return None
+
+    async def create_user_username(self) -> Optional[UserResponse]:
+        while True:
+            username = f"user{await self._generate_16_digit_number()}"
+            if not await self.get_user_by_username(username):
+                return username
 
     async def get_user_by_username(self, username: str) -> Optional[UserResponse]:
         logger.info(f"Checking if user with username {username} exists")
@@ -138,6 +145,10 @@ class UserService:
         )
         await self.db.create(social_account, UserSocialAccount)
 
+
+    async def _generate_16_digit_number(self) -> str:
+        """Generate random 16 digit number"""
+        return secrets.randbelow(10**16 - 10**15) + 10**15
 
 @lru_cache()
 def get_user_service(db_session: AsyncSession = Depends(get_session)) -> UserService:

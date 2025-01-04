@@ -1,13 +1,14 @@
 services:
 
-  db_auth:
+  db:
     image: postgres:16.3-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DB}
     volumes:
-      - pg_data_auth:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
       # - ./admin/database_dump.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PG_USER}"]
@@ -70,7 +71,7 @@ services:
 
 
 volumes:
-  pg_data_auth:
+  pg_data:
   redis_data:
   elastic_data:
   media:

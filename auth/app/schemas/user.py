@@ -5,6 +5,9 @@ from pydantic import EmailStr, Field
 from schemas.base import OrjsonBaseModel
 
 
+class RegisterUserBase(OrjsonBaseModel):
+    email: EmailStr
+
 class UserBase(OrjsonBaseModel):
     email: EmailStr
     username: str = Field(title="Username")
@@ -23,6 +26,14 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     id: UUID
 
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+class UserRegisterResponse(OrjsonBaseModel):
+    id: UUID
+    email: EmailStr
+    
     class Config:
         orm_mode = True
         from_attributes = True

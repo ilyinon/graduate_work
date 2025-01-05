@@ -62,6 +62,14 @@ test_search:
 	docker logs graduate_work-test_search-1 -f
 
 
+front: front_dir
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
+	-f front/docker-compose.yml -f front/docker-compose.override.yml \
+	up -d --build
+
+front_dir:
+	@:
+
 
 all:
 	$(MAKE) infra

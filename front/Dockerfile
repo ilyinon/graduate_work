@@ -3,7 +3,7 @@ FROM node:22.12
 
 WORKDIR /app
 COPY . /app
-RUN npm install
+RUN npm install && npm install react-router-dom
 
 
 

@@ -44,6 +44,8 @@ class PurchaseSettings(BaseSettings):
 
     promocode_service_url: str = "http://promocodes:8000/api/v1/promocodes"
 
+    auth_server_url: str = "http://auth:8000/api/v1/auth/check_access"
+
     @property
     def database_dsn(self):
         return f"postgresql+asyncpg://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_db}"

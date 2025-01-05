@@ -1,32 +1,66 @@
-
-from fastapi import FastAPI, HTTPException, Depends
-from models.purchase import Purchase, Tariff, User
-from sqlalchemy.orm import Session
-from db.pg import get_session
-from core.config import purchase_settings
-import requests
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
-from fastapi.responses import ORJSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import APIRouter, Depends, HTTPException, status
 import random
+from typing import Annotated, List, Literal, LiteralString, Optional, Union
 from uuid import UUID
-from sqlalchemy import select
-from core.logger import logger
 
+import requests
+from core.config import purchase_settings
+from core.logger import logger
+from db.pg import get_session
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
+from fastapi.security import HTTPBearer
+from helpers.auth import check_from_auth, take_user_id
+from models.purchase import Purchase, Tariff, User
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+get_token = HTTPBearer(auto_error=False)
 
 router = APIRouter()
 
+
+class PurchaseRequest(BaseModel):
+    tariff_id: UUID = Field(..., example="8656a8f3-2713-4efc-bf63-79bd60df8417")
+    promocode: Optional[str] = Field(None, example="DISCOUNT_10P")
+
+
+@router.get("/tariff")
+async def create_checkout(db: Session = Depends(get_session)):
+    result = await db.execute(select(Tariff))
+    tariffs = result.scalars().all()
+    tariffs_to_return = []
+    for tariff in tariffs:
+        new_tariff = {
+            "id": tariff.id,
+            "name": tariff.name,
+            "description": tariff.description,
+            "price": tariff.price,
+        }
+        tariffs_to_return.append(new_tariff)
+    return {"detail": "Список тарифов", "tariffs": tariffs_to_return}
+
+
 @router.post("/checkout")
-async def create_checkout(user_id: UUID, tariff_id: UUID, promocode: Optional[str] = None, db: Session = Depends(get_session)):
-    logger.info(f"Request to buy from - user_id: {user_id}, tariff_id: {tariff_id}, promocode: {promocode}")
+async def create_checkout(
+    request: PurchaseRequest,
+    db: Session = Depends(get_session),
+    credentials: str = Depends(get_token),
+):
 
-    result = await db.execute(select(User).where(User.id == user_id))
-    user = result.scalars().first()
-    logger.info(f"user: {user.id}")
+    logger.info(f"credentials: {credentials}")
+    if not await check_from_auth(credentials):
+        raise HTTPException(status_code=403, detail="Доступ запрещён")
 
-    if not user:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    logger.info(f"request: {request}")
+
+    if request.promocode:
+        promocode = request.promocode
+    else:
+        promocode = None
+    tariff_id = request.tariff_id
+
     result = await db.execute(select(Tariff).where(Tariff.id == tariff_id))
     tariff = result.scalars().first()
 
@@ -42,12 +76,25 @@ async def create_checkout(user_id: UUID, tariff_id: UUID, promocode: Optional[st
         if promocode_data:
             amount = await calculate_amount(promocode_data, amount)
             return {"detail": "Промокод успешно применён", "amount": amount}
-    
+
     return {"detail": "Стоимость подписки", "amount": amount}
 
+
 @router.post("/payment")
-async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[str] = None, db: Session = Depends(get_session)):
-    logger.info(f"Request to buy from - user_id: {user_id}, tariff_id: {tariff_id}, promocode: {promocode}")
+async def create_purchase(
+    request: PurchaseRequest,
+    db: Session = Depends(get_session),
+    credentials: str = Depends(get_token),
+):
+    logger.info(f"request: {request}")
+    if not await check_from_auth(credentials):
+        raise HTTPException(status_code=403, detail="Доступ запрещён")
+
+    user_id = await take_user_id(credentials.credentials)
+    promocode = request.promocode
+    tariff_id = request.tariff_id
+
+    logger.info(f"user_id: {user_id}")
 
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalars().first()
@@ -66,14 +113,18 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
     promocode_data = None
 
     if promocode:
-        promocode_data = await check_promocode(promocode)
+        try:
+            promocode_data = await check_promocode(promocode)
+        except Exception as e:
+            logger.info(f"failed to apply promocode: {e}")
 
     amount = await calculate_amount(promocode_data, amount)
 
-
     # Создаем запись о покупке
 
-    purchase = Purchase(user_id=user_id, tariff_id=tariff_id, amount=amount, promocode_code=promocode)
+    purchase = Purchase(
+        user_id=user_id, tariff_id=tariff_id, amount=amount, promocode_code=promocode
+    )
     db.add(purchase)
     await db.commit()
     await db.refresh(purchase)
@@ -87,7 +138,9 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
         await db.commit()
         if promocode:
             try:
-                response = requests.post(f"{purchase_settings.promocode_service_url}/apply/{promocode}")
+                response = requests.post(
+                    f"{purchase_settings.promocode_service_url}/apply/{promocode}"
+                )
                 response.raise_for_status()
             except Exception as e:
                 logger.info(f"the error to use promocode: {e}")
@@ -100,7 +153,9 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
         await db.commit()
         if promocode:
             try:
-                response = requests.post(f"{purchase_settings.promocode_service_url}/revoke/{promocode}")
+                response = requests.post(
+                    f"{purchase_settings.promocode_service_url}/revoke/{promocode}"
+                )
                 response.raise_for_status()
             except requests.HTTPError as e:
                 pass
@@ -110,7 +165,9 @@ async def create_purchase(user_id: UUID, tariff_id: UUID, promocode: Optional[st
 async def check_promocode(promocode: str) -> float:
     if promocode:
         try:
-            response = requests.get(f"{purchase_settings.promocode_service_url}/validate/{promocode}")
+            response = requests.get(
+                f"{purchase_settings.promocode_service_url}/validate/{promocode}"
+            )
             response.raise_for_status()
             promocode_data = response.json()
             return promocode_data
@@ -125,19 +182,27 @@ async def check_promocode(promocode: str) -> float:
             logger.error(f"promocode service doesn't response: {e}")
         return None
 
+
 async def calculate_amount(promocode_data, amount) -> float:
-        if promocode_data:
-            discount_percent = promocode_data.get("discount_percent", 0)
-            fixed_discount = promocode_data.get("fixed_discount", 0)
-            if discount_percent:
-                amount *= (1 - discount_percent / 100)
-            if fixed_discount:
-                amount -= fixed_discount
-            amount = max(amount, 0)
-        return amount
+    if promocode_data:
+        discount_percent = promocode_data.get("discount_percent", 0)
+        fixed_discount = promocode_data.get("discount_rubles", 0)
+        if discount_percent != 0:
+            amount *= 1 - discount_percent / 100
+            logger.info(
+                f"discount_percent: promocode {promocode_data["promocode"]}, {discount_percent}, amount {amount}"
+            )
+        if fixed_discount != 0:
+            amount -= fixed_discount
+            logger.info(
+                f"fixed_discount: promocode {promocode_data["promocode"]}, {fixed_discount}, amount {amount}"
+            )
+        amount = max(round(amount), 0)
+    return amount
+
 
 async def process_payment(user_id: int, amount: float) -> bool:
-    """ Emulate payment. 90% is successfull"""
+    """Emulate payment. 90% is successfull"""
     chance = random.randint(1, 100)
     if chance <= 90:
         return True

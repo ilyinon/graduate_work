@@ -1,12 +1,11 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
+from pydantic import EmailStr
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        String)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from pydantic import EmailStr
-from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -38,6 +37,7 @@ class Tariff(ModelBase, IdMixin, TimestampMixin):
     description = Column(String)
     price = Column(Float, nullable=False)
 
+
 class UserTariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "user_tariff"
     user_id = Column(
@@ -49,6 +49,7 @@ class UserTariff(ModelBase, IdMixin, TimestampMixin):
 
     # tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
     # user = relationship("User", back_populates="roles", lazy="selectin")
+
 
 class Purchase(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "purchases"

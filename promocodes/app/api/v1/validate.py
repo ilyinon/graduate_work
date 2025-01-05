@@ -1,18 +1,18 @@
-from fastapi import FastAPI, HTTPException, Depends
-from models.promocodes import Promocodes
-from sqlalchemy.orm import Session
-from db.pg import get_session
-from core.config import promocodes_settings
-import requests
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
-from fastapi.responses import ORJSONResponse
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import APIRouter, Depends, HTTPException, status
 import random
-from uuid import UUID
-from sqlalchemy import select
-from core.logger import logger
 from datetime import datetime, timedelta, timezone
+from typing import Annotated, List, Literal, LiteralString, Optional, Union
+from uuid import UUID
+
+import requests
+from core.config import promocodes_settings
+from core.logger import logger
+from db.pg import get_session
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
+from models.promocodes import Promocodes
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -21,12 +21,13 @@ router = APIRouter()
 async def validate_promocode(promocode: str, db: Session = Depends(get_session)):
     logger.info(f"promocode from request: {promocode}")
     try:
-        result = await db.execute(select(Promocodes).where(Promocodes.promocode == promocode))
+        result = await db.execute(
+            select(Promocodes).where(Promocodes.promocode == promocode)
+        )
         promocode = result.scalars().first()
         logger.info(f"promocode from db: {promocode.promocode}")
     except:
         promocode = None
-    
 
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
@@ -39,10 +40,12 @@ async def validate_promocode(promocode: str, db: Session = Depends(get_session))
     if promocode.is_one_time and promocode.used_count >= 1:
         raise HTTPException(status_code=400, detail="Промокод уже использован")
     if promocode.usage_limit and promocode.used_count >= promocode.usage_limit:
-        raise HTTPException(status_code=400, detail="Достигнут лимит использований промокода")
+        raise HTTPException(
+            status_code=400, detail="Достигнут лимит использований промокода"
+        )
 
     return {
-        "code": promocode.promocode,
+        "promocode": promocode.promocode,
         "discount_percent": promocode.discount_percent,
-        "discount_rubles": promocode.discount_rubles
+        "discount_rubles": promocode.discount_rubles,
     }

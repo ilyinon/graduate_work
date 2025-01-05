@@ -44,8 +44,25 @@ def upgrade() -> None:
         $$ LANGUAGE plpgsql;
         """
     )
+    op.execute(
+        """
+        CREATE OR REPLACE FUNCTION create_partitions_for_future_dates()
+        RETURNS VOID AS $$
+        DECLARE
+            future_date DATE := CURRENT_DATE;
+        BEGIN
+            -- Создаем партиции на ближайшие 30 дней
+            FOR i IN 0..29 LOOP
+                -- Прямое сложение с целым числом (i)
+                PERFORM create_sessions_partition(future_date - i);
+            END LOOP;
+        END;
+        $$ LANGUAGE plpgsql;
+        """
+    )
 
-    op.execute("SELECT create_sessions_partition(CURRENT_DATE);")
+    # op.execute("SELECT create_sessions_partition(CURRENT_DATE);")
+    op.execute("SELECT create_partitions_for_future_dates()")
 
     # ### end Alembic commands ###
 

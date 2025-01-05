@@ -1,0 +1,4 @@
+services:
+  promocodes:
+    ports: !override
+      - "10000:8000"

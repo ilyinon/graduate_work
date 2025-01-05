@@ -9,6 +9,7 @@ from models.role import Role, UserRole
 from models.token import Token
 from models.session import Session
 from models.purchase import Tariff, UserTariff, Purchase
+from models.promocodes import Promocodes
 
 config = context.config
 

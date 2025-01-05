@@ -1,0 +1,14 @@
+services:
+
+  front:
+    build: front
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    healthcheck:
+      test: bash -c "exec 6<> /dev/tcp/localhost/3000"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+    ports: []

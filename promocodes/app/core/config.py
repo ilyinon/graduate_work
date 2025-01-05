@@ -14,10 +14,10 @@ logging_config.dictConfig(LOGGING)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-class PurchaseSettings(BaseSettings):
+class PromocodesSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=DOTENV)
 
-    project_name: str = "purchase"
+    project_name: str = "promocodes"
 
     redis_host: str
     redis_port: int
@@ -44,8 +44,6 @@ class PurchaseSettings(BaseSettings):
 
     promocode_service_url: str = "http://promocodes:8000/api/v1/promocodes"
 
-    auth_server_url: str = "http://auth:8000/api/v1/auth/check_access"
-
     @property
     def database_dsn(self):
         return f"postgresql+asyncpg://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_db}"
@@ -55,9 +53,9 @@ class PurchaseSettings(BaseSettings):
         return f"postgresql://{self.pg_user}:{self.pg_password}@{self.pg_host}:{self.pg_port}/{self.pg_db}"
 
 
-purchase_settings = PurchaseSettings()
+promocodes_settings = PromocodesSettings()
 
 
 @AuthJWT.load_config
 def get_config():
-    return PurchaseSettings()
+    return PromocodesSettings()

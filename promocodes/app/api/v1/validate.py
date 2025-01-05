@@ -1,7 +1,34 @@
+import random
+from datetime import datetime, timedelta, timezone
+from typing import Annotated, List, Literal, LiteralString, Optional, Union
+from uuid import UUID
 
-@app.get("/api/v1/promocodes/validate/{code}")
-def validate_promocode(code: str, db: Session = Depends(get_db)):
-    promocode = db.query(PromoCode).filter_by(code=code).first()
+import requests
+from core.config import promocodes_settings
+from core.logger import logger
+from db.pg import get_session
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
+from models.promocodes import Promocodes
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+router = APIRouter()
+
+
+@router.get("/{promocode}")
+async def validate_promocode(promocode: str, db: Session = Depends(get_session)):
+    logger.info(f"promocode from request: {promocode}")
+    try:
+        result = await db.execute(
+            select(Promocodes).where(Promocodes.promocode == promocode)
+        )
+        promocode = result.scalars().first()
+        logger.info(f"promocode from db: {promocode.promocode}")
+    except:
+        promocode = None
+
     if not promocode:
         raise HTTPException(status_code=404, detail="Промокод не найден")
     if not promocode.is_active:
@@ -13,10 +40,12 @@ def validate_promocode(code: str, db: Session = Depends(get_db)):
     if promocode.is_one_time and promocode.used_count >= 1:
         raise HTTPException(status_code=400, detail="Промокод уже использован")
     if promocode.usage_limit and promocode.used_count >= promocode.usage_limit:
-        raise HTTPException(status_code=400, detail="Достигнут лимит использований промокода")
+        raise HTTPException(
+            status_code=400, detail="Достигнут лимит использований промокода"
+        )
 
     return {
-        "code": promocode.code,
+        "promocode": promocode.promocode,
         "discount_percent": promocode.discount_percent,
-        "fixed_discount": promocode.fixed_discount
+        "discount_rubles": promocode.discount_rubles,
     }

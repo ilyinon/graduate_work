@@ -20,6 +20,15 @@ purchase: purchase_dir
 purchase_dir:
 	@:
 
+promocodes: promocodes_dir
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
+	-f promocodes/docker-compose.yml -f promocodes/docker-compose.override.yml \
+	up -d --build
+	docker logs -f graduate_work-promocodes-1
+
+promocodes_dir:
+	@:
+
 search: search_dir
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
 	-f search/app/docker-compose.yml -f search/app/docker-compose.override.yml \
@@ -52,6 +61,14 @@ test_search:
 	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f search/tests/functional/docker-compose.yml up -d --build
 	docker logs graduate_work-test_search-1 -f
 
+
+front: front_dir
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
+	-f front/docker-compose.yml -f front/docker-compose.override.yml \
+	up -d --build
+
+front_dir:
+	@:
 
 
 all:

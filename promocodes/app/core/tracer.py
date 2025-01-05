@@ -8,7 +8,7 @@ from opentelemetry.sdk.trace.export import (BatchSpanProcessor,
 
 
 def configure_tracer() -> None:
-    resource = Resource(attributes={"service.name": "auth-service"})
+    resource = Resource(attributes={"service.name": "promocodes"})
     trace.set_tracer_provider(TracerProvider(resource=resource))
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(

@@ -23,6 +23,7 @@ function LoginForm({ setToken }) {
       const response = await axios.post(LOGIN_URL, formData);
       const { access_token } = response.data;
       setToken(access_token);
+      localStorage.setItem('token', access_token); // Сохраняем токен в localStorage
       alert('Вход выполнен успешно!');
     } catch (error) {
       console.error('Ошибка входа:', error);

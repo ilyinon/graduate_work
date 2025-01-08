@@ -7,6 +7,17 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.orm import Session
+import sentry_sdk
+
+
+if promocodes_settings.sentry_enable:
+    sentry_sdk.init(
+        dsn=promocodes_settings.sentry_dsn,
+        traces_sample_rate=promocodes_settings.sentry_traces_sample_rate,
+        _experiments={
+            "continuous_profiling_auto_start": True,
+        },
+    )
 
 app = FastAPI(
     title="promocodes",

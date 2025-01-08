@@ -29,5 +29,7 @@ class Promocodes(ModelBase, IdMixin, TimestampMixin):
         Integer, nullable=True, default=0
     )  # Максимальное количество использований
     used_count = Column(Integer, default=0)  # Текущее количество использований
-    is_active = Column(Boolean, default=True)
-    is_one_time = Column(Boolean, default=True)  # Одноразовый или многоразовый
+    is_active = Column(Boolean, default=True, nullable=False)
+    is_one_time = Column(
+        Boolean, default=True, nullable=False
+    )  # Одноразовый или многоразовый

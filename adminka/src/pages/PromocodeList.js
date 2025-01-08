@@ -10,7 +10,7 @@ function PromocodeList() {
   useEffect(() => {
     const fetchPromocodes = async () => {
       try {
-        const response = await axios.get('http://localhost/api/v1/promocodes/list', {
+        const response = await axios.get('http://localhost/api/v1/promocodes/list/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

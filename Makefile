@@ -70,6 +70,14 @@ front: front_dir
 front_dir:
 	@:
 
+adminka: adminka_dir
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml \
+	-f adminka/docker-compose.yml -f adminka/docker-compose.override.yml \
+	up -d --build
+
+adminka_dir:
+	@:
+
 
 all:
 	$(MAKE) infra

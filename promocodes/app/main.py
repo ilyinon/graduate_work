@@ -1,14 +1,9 @@
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
-
-import requests
-from api.v1 import apply, revoke, validate
+import sentry_sdk
+from api.v1 import apply, generate, revoke, validate
 from core.config import promocodes_settings
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
-from sqlalchemy.orm import Session
-import sentry_sdk
-
 
 if promocodes_settings.sentry_enable:
     sentry_sdk.init(
@@ -45,3 +40,4 @@ app.add_middleware(
 app.include_router(apply.router, prefix="/api/v1/promocodes/apply")
 app.include_router(revoke.router, prefix="/api/v1/promocodes/revoke")
 app.include_router(validate.router, prefix="/api/v1/promocodes/validate")
+app.include_router(generate.router, prefix="/api/v1/promocodes/generate")

@@ -1,15 +1,6 @@
-import random
-from datetime import datetime, timedelta, timezone
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
-from uuid import UUID
-
-import requests
-from core.config import promocodes_settings
 from core.logger import logger
 from db.pg import get_session
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import ORJSONResponse
+from fastapi import APIRouter, Depends, HTTPException
 from models.promocodes import Promocodes
 from sqlalchemy import select
 from sqlalchemy.orm import Session

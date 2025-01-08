@@ -29,7 +29,9 @@ class PromocodesSettings(BaseSettings):
     pg_db: str
 
     sentry_enable: bool = True
-    sentry_dsn: str = "https://c6e15651de424b3321b89771c9ec00bb@o4508310740598784.ingest.de.sentry.io/4508310743941200"
+    sentry_dsn: str = (
+        "https://c6e15651de424b3321b89771c9ec00bb@o4508310740598784.ingest.de.sentry.io/4508310743941200"
+    )
     sentry_traces_sample_rate: float = 1.0
 
     authjwt_secret_key: str

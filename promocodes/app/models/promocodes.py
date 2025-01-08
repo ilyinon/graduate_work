@@ -1,12 +1,9 @@
 from datetime import datetime
 from uuid import uuid4
 
-from pydantic import EmailStr
-from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
-                        String)
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, Null, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 
 ModelBase = declarative_base()
 
@@ -26,8 +23,8 @@ class Promocodes(ModelBase, IdMixin, TimestampMixin):
     promocode = Column(String, unique=True, index=True)
     discount_percent = Column(Float, default=0.0)  # Скидка в процентах
     discount_rubles = Column(Float, default=0.0)  # Фиксированная скидка в валюте
-    start_date = Column(DateTime, nullable=True)
-    end_date = Column(DateTime, nullable=True)
+    start_date = Column(DateTime(timezone=True), nullable=True, default=datetime.now())
+    end_date = Column(DateTime(timezone=True), nullable=True, default=Null)
     usage_limit = Column(
         Integer, nullable=True, default=0
     )  # Максимальное количество использований

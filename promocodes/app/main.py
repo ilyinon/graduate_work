@@ -1,5 +1,5 @@
 import sentry_sdk
-from api.v1 import apply, generate, revoke, validate
+from api.v1 import apply, generate, list, revoke, validate
 from core.config import promocodes_settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,3 +42,4 @@ app.include_router(apply.router, prefix="/api/v1/promocodes/apply")
 app.include_router(revoke.router, prefix="/api/v1/promocodes/revoke")
 app.include_router(validate.router, prefix="/api/v1/promocodes/validate")
 app.include_router(generate.router, prefix="/api/v1/promocodes/generate")
+app.include_router(list.router, prefix="/api/v1/promocodes/list")

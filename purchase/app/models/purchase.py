@@ -1,13 +1,9 @@
 from datetime import datetime
 from uuid import uuid4
 
-from pydantic import EmailStr
-from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
-                        String)
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from werkzeug.security import check_password_hash, generate_password_hash
 
 ModelBase = declarative_base()
 

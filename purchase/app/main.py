@@ -1,15 +1,8 @@
 import logging
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
-
-import requests
 from api.v1 import purchase
-from core.config import purchase_settings
-from db.pg import get_session
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
-from models.purchase import Purchase, Tariff, User
-from sqlalchemy.orm import Session
 
 app = FastAPI(
     title="purchase",

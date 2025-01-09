@@ -21,6 +21,8 @@ async def get_current_user(
 
     token = credentials.credentials
 
+    logger.info(f"token: {token}")
+
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
@@ -32,7 +34,7 @@ async def get_current_user(
         if response.status_code != 200:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid token",
+                detail="Invalid token {token}",
             )
 
         user_data = response.json()

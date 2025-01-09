@@ -1,14 +1,12 @@
 import random
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
+from typing import Optional
 from uuid import UUID
 
 import requests
 from core.config import purchase_settings
 from core.logger import logger
 from db.pg import get_session
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import ORJSONResponse
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer
 from helpers.auth import check_from_auth, take_user_id
 from models.purchase import Purchase, Tariff, User
@@ -27,7 +25,13 @@ class PurchaseRequest(BaseModel):
 
 
 @router.get("/tariff")
-async def create_checkout(db: Session = Depends(get_session)):
+async def get_tariffs(
+    db: Session = Depends(get_session), credentials: str = Depends(get_token)
+):
+
+    if not await check_from_auth(credentials):
+        raise HTTPException(status_code=403, detail="Доступ запрещён")
+
     result = await db.execute(select(Tariff))
     tariffs = result.scalars().all()
     tariffs_to_return = []
@@ -94,6 +98,8 @@ async def create_purchase(
     promocode = request.promocode
     tariff_id = request.tariff_id
 
+    headers = {"Authorization": f"Bearer {purchase_settings.promocode_service_token}"}
+
     logger.info(f"user_id: {user_id}")
 
     result = await db.execute(select(User).where(User.id == user_id))
@@ -139,7 +145,8 @@ async def create_purchase(
         if promocode:
             try:
                 response = requests.post(
-                    f"{purchase_settings.promocode_service_url}/apply/{promocode}"
+                    f"{purchase_settings.promocode_service_url}/apply/{promocode}",
+                    headers=headers,
                 )
                 response.raise_for_status()
             except Exception as e:
@@ -154,7 +161,8 @@ async def create_purchase(
         if promocode:
             try:
                 response = requests.post(
-                    f"{purchase_settings.promocode_service_url}/revoke/{promocode}"
+                    f"{purchase_settings.promocode_service_url}/revoke/{promocode}",
+                    headers=headers,
                 )
                 response.raise_for_status()
             except requests.HTTPError as e:
@@ -163,10 +171,14 @@ async def create_purchase(
 
 
 async def check_promocode(promocode: str) -> float:
+
+    headers = {"Authorization": f"Bearer {purchase_settings.promocode_service_token}"}
+
     if promocode:
         try:
             response = requests.get(
-                f"{purchase_settings.promocode_service_url}/validate/{promocode}"
+                f"{purchase_settings.promocode_service_url}/validate/{promocode}",
+                headers=headers,
             )
             response.raise_for_status()
             promocode_data = response.json()

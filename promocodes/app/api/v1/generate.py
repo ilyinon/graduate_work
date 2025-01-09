@@ -4,6 +4,7 @@ import string
 from core.logger import logger
 from db.pg import get_session
 from fastapi import APIRouter, Depends, HTTPException
+from helpers.auth import get_current_user
 from models.promocodes import Promocodes
 from schemas.promocodes import PromocodeCreate, PromocodeOut
 from sqlalchemy import select
@@ -13,7 +14,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 router = APIRouter()
 
 
-async def generate_unique_promocode(db_session: AsyncSession) -> str:
+async def _generate_unique_promocode(
+    db_session: AsyncSession,
+) -> str:
+    """
+    Generate promode by provided parameters.
+    """
+
     while True:
         # Генерируем случайную строку из 12 символов (буквы и цифры)
         code = "".join(random.choices(string.ascii_uppercase + string.digits, k=12))
@@ -28,9 +35,11 @@ async def generate_unique_promocode(db_session: AsyncSession) -> str:
 
 @router.post("/", response_model=PromocodeOut)
 async def generate_promocode(
-    promocode_data: PromocodeCreate, db: AsyncSession = Depends(get_session)
+    promocode_data: PromocodeCreate,
+    db: AsyncSession = Depends(get_session),
+    current_user: dict = Depends(get_current_user),
 ):
-    code = await generate_unique_promocode(db)
+    code = await _generate_unique_promocode(db)
     logger.info(f"Generated promocode: {code}")
 
     new_promocode = Promocodes(

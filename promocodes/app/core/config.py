@@ -37,6 +37,10 @@ class PromocodesSettings(BaseSettings):
     authjwt_secret_key: str
     authjwt_algorithm: str = "HS256"
 
+    auth_service_url: str = "http://auth:8000/api/v1/auth/check_access"
+    auth_sender_role: str = "service,admin"
+    auth_timeout: float = 5.0
+
     jwt_access_token_expires_in_seconds: int = 1800
     jwt_refresh_token_expires_in_days: int = 30
 

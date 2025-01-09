@@ -1,6 +1,7 @@
 from core.logger import logger
 from db.pg import get_session
 from fastapi import APIRouter, Depends, HTTPException
+from helpers.auth import get_current_user
 from models.promocodes import Promocodes
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -9,7 +10,15 @@ router = APIRouter()
 
 
 @router.post("/{promocode}")
-async def apply_promocode(promocode: str, db: Session = Depends(get_session)):
+async def apply_promocode(
+    promocode: str,
+    db: Session = Depends(get_session),
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Apply promocode to use by adding one to used_count.
+    """
+
     logger.info(f"promocode from request: {promocode}")
     result = await db.execute(
         select(Promocodes).where(Promocodes.promocode == promocode)

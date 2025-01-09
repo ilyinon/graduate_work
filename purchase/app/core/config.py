@@ -43,6 +43,7 @@ class PurchaseSettings(BaseSettings):
     jaeger_agent_port: int = 6831
 
     promocode_service_url: str = "http://promocodes:8000/api/v1/promocodes"
+    promocode_service_token: str
 
     auth_server_url: str = "http://auth:8000/api/v1/auth/check_access"
 

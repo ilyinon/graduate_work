@@ -1,0 +1,50 @@
+@startuml
+
+title Микросервисная архитектура promocodes
+
+actor Пользователь
+actor Администратор
+
+package "Внутренние Балансеры"{
+    [Nginx]
+}
+
+package "internal API" {
+    [Auth]
+    [Purchase]
+    [Promocodes]
+}
+
+package "public front" {
+    [Front]
+}
+
+package "internal front" {
+    [Adminka]
+}
+
+
+database "Postgres" {
+    [Auth]
+    [Promocodes]
+    [Purchase]
+}
+
+
+
+Пользователь --> [public front]
+Администратор --> [internal front] : Управление промокодами
+[public front] --> [Внутренние Балансеры]
+
+
+[Nginx] --> [internal API] : К purchase
+[Purchase] --> [Promocodes] : Работа с промокодами
+[Purchase] --> [Auth] : Аутентификация 
+[Promocodes] --> [Auth]: Аутентификация
+[Adminka] --> [internal API] : Аутентификация, промокоды
+
+[Promocodes] --> [Postgres] : Чтение и сохранение промокодов в БД
+[Purchase] --> [Postgres] : Сохранение информации о покупках, получение тарифов
+[Auth] --> [Postgres] : Сохраняем и читаем из БД
+
+@enduml

@@ -31,14 +31,14 @@ class Promocodes(ModelBase, IdMixin, TimestampMixin):
     used_count = Column(Integer, default=0)
     is_active = Column(Boolean, default=True, nullable=False)
     is_one_time = Column(Boolean, default=True, nullable=False)
-    # user_promocodes = relationship("UserPromocodes", back_populates="promocode")
+    user_promocodes = relationship("UserPromocodes", back_populates="promocode")
 
 
-# class UserPromocodes(ModelBase, IdMixin, TimestampMixin):
-#     __tablename__ = "user_promocodes"
+class UserPromocodes(ModelBase, IdMixin, TimestampMixin):
+    __tablename__ = "user_promocodes"
 
-#     user_id = Column(UUID, ForeignKey('users.id'), nullable=False)
-#     promocode_id = Column(UUID, ForeignKey('promocodes.id'), nullable=False)
+    user_id = Column(UUID, ForeignKey('users.id'), nullable=False)
+    promocode_id = Column(UUID, ForeignKey('promocodes.id'), nullable=False)
 
-#     user = relationship("Users", back_populates="user_promocodes")
-#     promocode = relationship("Promocodes", back_populates="user_promocodes")
+    user = relationship("Users", back_populates="user_promocodes")
+    promocode = relationship("Promocodes", back_populates="user_promocodes")

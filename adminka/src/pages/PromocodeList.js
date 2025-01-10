@@ -39,7 +39,7 @@ function PromocodeList() {
               <th>Активен</th>
               <th>Одноразовый</th>
               <th>Использовано</th>
-              {/* Добавьте другие необходимые поля */}
+              <th>Лимит</th>
             </tr>
           </thead>
           <tbody>
@@ -52,7 +52,7 @@ function PromocodeList() {
                 <td>{code.is_active ? 'Да' : 'Нет'}</td>
                 <td>{code.is_one_time ? 'Да' : 'Нет'}</td>
                 <td>{code.used_count}</td>
-                {/* Отобразите другие поля по необходимости */}
+                <td>{code.usage_limit}</td>
               </tr>
             ))}
           </tbody>

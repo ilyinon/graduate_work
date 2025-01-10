@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import HTTPBearer, OAuth2AuthorizationCodeBearer
 from schemas.base import HTTPExceptionResponse, HTTPValidationError
-from schemas.user import UserCreate, UserResponse, UserRegisterResponse
+from schemas.user import UserCreate, UserRegisterResponse, UserResponse
 from services.user import UserService, get_user_service
 
 get_token = HTTPBearer(auto_error=False)

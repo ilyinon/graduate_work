@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
 class PromocodeCreate(BaseModel):
@@ -48,11 +48,10 @@ class PromocodeOut(BaseModel):
 
 
 class ApplyPromocodeRequest(BaseModel):
-    user_id: UUID
+    user_email: EmailStr
     promocode: str
 
 
 class ApplyPromocodeResponse(BaseModel):
     success: bool
     message: str
-    promocode: Optional[PromocodeOut] = None

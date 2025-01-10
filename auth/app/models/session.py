@@ -1,12 +1,11 @@
+from uuid import uuid4
+
 from models.base import ModelBase
 from models.mixin import IdMixin, TimestampMixin
-from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from models.base import ModelBase
-from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
-from uuid import uuid4
 
 
 class Session(ModelBase, TimestampMixin):

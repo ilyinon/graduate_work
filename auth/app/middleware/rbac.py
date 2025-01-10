@@ -1,8 +1,10 @@
 from typing import Callable, List
-from fastapi import FastAPI, Request, HTTPException, status
+
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.routing import APIRoute
 from fastapi.security import HTTPBearer
 from starlette.types import ASGIApp
+
 
 class RBACMiddleware(type):
     def __new__(cls, name, bases, attrs, *kwargs):

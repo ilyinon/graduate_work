@@ -1,4 +1,5 @@
 import logging
+import secrets
 from datetime import datetime
 from functools import lru_cache
 from typing import Optional
@@ -14,7 +15,6 @@ from schemas.user import UserCreate, UserPatch, UserResponse, UserResponseLogin
 from services.database import BaseDb, PostgresqlEngine
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.generate_password import generate_password
-import secrets
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +56,9 @@ class UserService:
 
         user_create = {}
         user_create["email"] = email
-        user_create[
-            "username"
-        ] = f"cinema_{str(datetime.timestamp(datetime.now())).split('.')[0]}"
+        user_create["username"] = (
+            f"cinema_{str(datetime.timestamp(datetime.now())).split('.')[0]}"
+        )
         user_create["full_name"] = f"{email.split('@')[0]}"
         user_create["password"] = generate_password()
         logger.info(f"Oauth generated {user_create}")
@@ -146,10 +146,10 @@ class UserService:
         )
         await self.db.create(social_account, UserSocialAccount)
 
-
     async def _generate_16_digit_number(self) -> str:
         """Generate random 16 digit number"""
         return secrets.randbelow(10**16 - 10**15) + 10**15
+
 
 @lru_cache()
 def get_user_service(db_session: AsyncSession = Depends(get_session)) -> UserService:

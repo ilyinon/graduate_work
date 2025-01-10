@@ -5,7 +5,6 @@ from core.config import auth_settings
 from sqlalchemy import engine_from_config, pool
 from tests.models.base import ModelBase
 
-
 config = context.config
 
 

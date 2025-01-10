@@ -51,7 +51,6 @@ function GeneratePromocode() {
         <div>
           <h3>Промокод сгенерирован:</h3>
           <p>Промокод: {generatedCode.promocode}</p>
-          {/* Выводите другие данные по необходимости */}
         </div>
       ) : (
         <form onSubmit={handleSubmit}>

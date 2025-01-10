@@ -38,9 +38,8 @@ class Tariff(ModelBase, IdMixin, TimestampMixin):
     price = Column(Float, nullable=False)
 
     purchase = relationship("Purchase", back_populates="tariff")
-    user_tariff = relationship(
-        "UserTariff", back_populates="tariff"
-    )
+    user_tariff = relationship("UserTariff", back_populates="tariff")
+
 
 class UserTariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "user_tariff"

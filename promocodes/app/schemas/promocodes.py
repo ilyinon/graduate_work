@@ -45,3 +45,14 @@ class PromocodeOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ApplyPromocodeRequest(BaseModel):
+    user_id: UUID
+    promocode: str
+
+
+class ApplyPromocodeResponse(BaseModel):
+    success: bool
+    message: str
+    promocode: Optional[PromocodeOut] = None

@@ -52,9 +52,9 @@ def upgrade() -> None:
             future_date DATE := CURRENT_DATE;
         BEGIN
             -- Создаем партиции на ближайшие 30 дней
-            FOR i IN 0..29 LOOP
+            FOR i IN 0..31 LOOP
                 -- Прямое сложение с целым числом (i)
-                PERFORM create_sessions_partition(future_date - i);
+                PERFORM create_sessions_partition(future_date + i);
             END LOOP;
         END;
         $$ LANGUAGE plpgsql;

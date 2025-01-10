@@ -59,7 +59,7 @@ def upgrade() -> None:
     base_tariffs = [
         {
             'id': str(uuid4()),
-            'name': 'Стандартный',
+            'name': 'Стандарт',
             'description': 'Доступ к базовому контенту кинотеатра.',
             'price': 399,
             'created_at': now,

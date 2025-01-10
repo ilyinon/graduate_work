@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from core.config import promocodes_settings
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
@@ -20,5 +22,11 @@ async_session = async_sessionmaker(
 
 
 async def get_session() -> AsyncSession:
+    async with async_session() as session:
+        yield session
+
+
+@asynccontextmanager
+async def get_session_local() -> AsyncSession:
     async with async_session() as session:
         yield session

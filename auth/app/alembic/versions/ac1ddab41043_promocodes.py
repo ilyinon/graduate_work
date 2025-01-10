@@ -49,8 +49,11 @@ def upgrade() -> None:
             'usage_limit': 10,
             'used_cound': 0,
             'is_active': True,
+            'is_one_time': False,
             'created_at': now,
             'modified_at': now,
+            'start_date': '2025-01-01',
+            'end_date' : '2025-12-31's
         },
         {
             'id': str(uuid4()),
@@ -60,8 +63,11 @@ def upgrade() -> None:
             'usage_limit': 0,
             'used_cound': 0,
             'is_active': True,
+            'is_one_time': False,
             'created_at': now,
             'modified_at': now,
+            'start_date': '2025-01-01',
+            'end_date' : '2025-12-31'
         },
         {
             'id': str(uuid4()),
@@ -71,8 +77,11 @@ def upgrade() -> None:
             'usage_limit': 0,
             'used_cound': 0,
             'is_active': True,
+            'is_one_time': False,
             'created_at': now,
             'modified_at': now,
+            'start_date': '2025-01-01',
+            'end_date' : '2025-12-31'
         },
     ]
     op.bulk_insert(promocodes_table, base_promocodes)

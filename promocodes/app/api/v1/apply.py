@@ -2,6 +2,7 @@ from core.logger import logger
 from db.pg import get_session
 from fastapi import APIRouter, Depends, HTTPException
 from helpers.auth import get_current_user
+from helpers.validate import _validate_promocode
 from models.promocodes import Promocodes
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -20,6 +21,7 @@ async def apply_promocode(
     """
 
     logger.info(f"promocode from request: {promocode}")
+    await _validate_promocode(promocode)
     result = await db.execute(
         select(Promocodes).where(Promocodes.promocode == promocode)
     )

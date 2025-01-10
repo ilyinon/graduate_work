@@ -28,7 +28,7 @@ async def get_promocodes_list(
         promocodes = result.scalars().all()
         return promocodes
     except SQLAlchemyError as e:
-        logger.info("erorr to get promocodes: {e}")
+        logger.info(f"error to get promocodes: {e}")
         raise HTTPException(
             status_code=500, detail="Ошибка при получении списка промокодов"
         )

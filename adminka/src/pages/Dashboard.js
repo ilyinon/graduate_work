@@ -3,6 +3,7 @@ import { Link, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import GeneratePromocode from './GeneratePromocode';
 import ValidatePromocode from './ValidatePromocode';
 import PromocodeList from './PromocodeList';
+import AssignPromocode from './AssignPromocode';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ function Dashboard() {
         <Link to="/dashboard/generate">Генерация промокода</Link> |{' '}
         <Link to="/dashboard/validate">Валидация промокода</Link> |{' '}
         <Link to="/dashboard/list">Список промокодов</Link> |{' '}
+        <Link to="/dashboard/assign">Назначить промокод пользователю</Link> |{' '}
         <button onClick={handleLogout}>Выйти</button>
       </nav>
 
@@ -27,6 +29,7 @@ function Dashboard() {
         <Route path="generate" element={<GeneratePromocode />} />
         <Route path="validate" element={<ValidatePromocode />} />
         <Route path="list" element={<PromocodeList />} />
+        <Route path="assign" element={<AssignPromocode />} />
       </Routes>
     </div>
   );

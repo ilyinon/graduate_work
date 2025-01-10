@@ -1,4 +1,5 @@
 import random
+from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
@@ -195,7 +196,7 @@ async def check_promocode(promocode: str) -> float:
         return None
 
 
-async def calculate_amount(promocode_data, amount) -> float:
+async def calculate_amount(promocode_data, amount) -> Decimal:
     if promocode_data:
         discount_percent = promocode_data.get("discount_percent", 0)
         fixed_discount = promocode_data.get("discount_rubles", 0)
@@ -209,7 +210,7 @@ async def calculate_amount(promocode_data, amount) -> float:
             logger.info(
                 f"fixed_discount: promocode {promocode_data["promocode"]}, {fixed_discount}, amount {amount}"
             )
-        amount = max(round(amount), 0)
+        amount = Decimal(max(round(amount), 0))
     return amount
 
 

@@ -7,6 +7,10 @@ https://github.com/ilyinon/graduate_work
 ##### Схема
 ![alt text](https://www.plantuml.com/plantuml/png/ZLHDQzj04BtlhnXyJlv03oM-57eflWSTDhBgYDYIaTPGA0KdgTj32avAJwNGbXvwTKrCX6sfVs7s7_LDLd6os38rtkytRzwyCJxAZSxCQD1NoiIc7n5_uuANTioLFUS5rZaNs9KyirF2DBOJN5pm0g0BUmd0Z8PPEaZ3j1lbIkdGf1dnTwvuPJ_n7TOvmYG0vuVdQxxbDHALGWwUiK2GSgpKK8TdkXTHYpzpYGHuH6mfK5uGt_2CLnYbasUlMcyLuNFygXSdRmBrxWb3d9WeItIVsfsNBQfnxP4v3TosCyh2Kvr73yTD6JxDS7JIZqDwdQM9sT2ya5D3EX_PxWxYv4pVOrLN6tsYSw0xQMvwMPHl2_ELU4eTYMgobmuFdzFnKxs1QlRQeNtL0JqZ_iL_1GNc5NXhu-MguZN64kCMpo1LVZB7-9-D2r18tJLVYRJhNiTN6jPrgqS71Eiv9CWV8Fx35UgQaJrl5EkJECSb_5haYbZCXNqFmKkOz07xAIalrsFS_Z2rQNj3RNjY3xRqsokrGqRz2t8E_7Pipki29i2D2LXWU6CFCUOatnl-ufcpnVvp1nkc4i8hNA-TTEJb2bc4trvYbP8c1-vcXO8_ReAbKmX4vI92EKlt9xPJHA-bEF0KGb2V-SvLe8wYf8k_idy0)
 
+##### FR / NFR
+Функциональные требовния: docs/FR.md
+НеФункциональные требования: docs/NFR.md
+
 ##### Допущенные упрощения
 ```
 ```

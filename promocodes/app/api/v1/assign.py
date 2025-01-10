@@ -3,12 +3,11 @@ from db.pg import get_session, get_session_local
 from fastapi import APIRouter, Depends, HTTPException
 from helpers.auth import get_current_user
 from helpers.validate import _validate_promocode
-from models.promocodes import Promocodes, UserPromocodes
+from models.promocodes import UserPromocodes
 from models.users import User
 from schemas.promocodes import ApplyPromocodeRequest, ApplyPromocodeResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import joinedload
 
 router = APIRouter()
 

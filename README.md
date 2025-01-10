@@ -8,11 +8,12 @@ https://github.com/ilyinon/graduate_work
 ![alt text](https://www.plantuml.com/plantuml/png/ZLHDQzj04BtlhnXyJlv03oM-57eflWSTDhBgYDYIaTPGA0KdgTj32avAJwNGbXvwTKrCX6sfVs7s7_LDLd6os38rtkytRzwyCJxAZSxCQD1NoiIc7n5_uuANTioLFUS5rZaNs9KyirF2DBOJN5pm0g0BUmd0Z8PPEaZ3j1lbIkdGf1dnTwvuPJ_n7TOvmYG0vuVdQxxbDHALGWwUiK2GSgpKK8TdkXTHYpzpYGHuH6mfK5uGt_2CLnYbasUlMcyLuNFygXSdRmBrxWb3d9WeItIVsfsNBQfnxP4v3TosCyh2Kvr73yTD6JxDS7JIZqDwdQM9sT2ya5D3EX_PxWxYv4pVOrLN6tsYSw0xQMvwMPHl2_ELU4eTYMgobmuFdzFnKxs1QlRQeNtL0JqZ_iL_1GNc5NXhu-MguZN64kCMpo1LVZB7-9-D2r18tJLVYRJhNiTN6jPrgqS71Eiv9CWV8Fx35UgQaJrl5EkJECSb_5haYbZCXNqFmKkOz07xAIalrsFS_Z2rQNj3RNjY3xRqsokrGqRz2t8E_7Pipki29i2D2LXWU6CFCUOatnl-ufcpnVvp1nkc4i8hNA-TTEJb2bc4trvYbP8c1-vcXO8_ReAbKmX4vI92EKlt9xPJHA-bEF0KGb2V-SvLe8wYf8k_idy0)
 
 ##### FR / NFR
-Функциональные требовния: docs/FR.md
-НеФункциональные требования: docs/NFR.md
+Функциональные требовния: [docs/FR.md](docs/FR.md)
+НеФункциональные требования: [docs/NFR.md](docs/NFR.md)
 
 ##### Допущенные упрощения
 ```
+Purchase по факту сервис заглушка который делает отображение тарифов, checkout и эмулирует оплату.
 ```
 
 ##### Описание сервисов
@@ -66,8 +67,14 @@ front: http://localhost:3000/
 adminka: http://localhost:3001/
 ```
 
-#####  http://localhost/api/v1/promocodes/openapi
+
+#####  Сервис промокодов
+<details>
+<summary>http://localhost/api/v1/promocodes/openapi</summary>
+
 ![alt text](images/promocodes.png)
+
+###### Список промокодов
 
 ```bash
 curl -X 'GET' \
@@ -117,6 +124,7 @@ curl -X 'GET' \
 ]
 ```
 
+###### Применить промокод
 ```bash
 curl -X 'POST' \
   'http://localhost/api/v1/promocodes/apply/MINUS100' \
@@ -131,6 +139,7 @@ curl -X 'POST' \
 }
 ```
 
+###### Отменить использование промокода
 ```bash
 curl -X 'POST' \
   'http://localhost/api/v1/promocodes/revoke/MINUS100' \
@@ -146,6 +155,7 @@ curl -X 'POST' \
 ```
 
 
+###### Проверить промокод
 ```bash
 curl -X 'GET' \
   'http://localhost/api/v1/promocodes/validate/MINUS100' \
@@ -161,6 +171,7 @@ curl -X 'GET' \
 }
 ```
 
+###### Сгенерировать промокод
 ```bash
 curl -X 'POST' \
   'http://localhost/api/v1/promocodes/generate/' \
@@ -193,7 +204,7 @@ curl -X 'POST' \
 }
 ```
 
-
+###### Применить промокод со стороны администратора
 ```bash
 curl -X 'POST' \
   'http://localhost/api/v1/promocodes/assign/' \
@@ -212,18 +223,30 @@ curl -X 'POST' \
   "message": "Промокод успешно применен к аккаунту пользователя"
 }
 ```
+</details>
 
-#####  http://localhost/api/v1/purchase/openapi
+##### Сервис purchase
+<details>
+<summary>http://localhost/api/v1/purchase/openapi</summary>
+
+
 
 ![alt text](images/purchase.png)
+</details>
 
-
-#####  http://localhost:3000 Front
+#####   Front
+<details>
+<summary>http://localhost:3000</summary>
 Добавлен тестовый фронт, где можно зарегистировать, залогиниться под пользователем, ввести промокод, увидеть цену со скидкой и "купить".
+
 ![alt text](images/front1.png)
 ![alt text](images/front2.png)
 
-#####  http://localhost:3001 Adminka
+</details>
+
+#####   Adminka
+<details>
+<summary>http://localhost:3001</summary>
 Добавлена админка где можно залогиниться под админом ( добавляем скриптом).
 Доступно: генерация промокода, валидация, просмотр списка промокодов, а также назначение прмокодома пользователю вручную
 
@@ -239,12 +262,12 @@ curl -X 'POST' \
 
 ![alt text](images/adminka_assign.png)
 
+</details>
 
-
-##### Запуск тестов
+#### Запуск тестов
 
 ```bash
-make promocodes
+make test_promocodes
 ```
 
 ```bash
@@ -269,3 +292,26 @@ tests/functional/src/auth/test_promocodes.py::test_assign_promocode PASSED [100%
 
 ======================== 10 passed, 4 warnings in 1.71s ========================
 ```
+
+
+##### Оповещение в ТГ
+
+![alt text](images/tg.png)
+
+##### Sentry 
+
+Отправляем исключения в Sentry
+```bash
+if promocodes_settings.sentry_enable:
+    sentry_sdk.init(
+        dsn=promocodes_settings.sentry_dsn,
+        traces_sample_rate=promocodes_settings.sentry_traces_sample_rate,
+        _experiments={
+            "continuous_profiling_auto_start": True,
+        },
+    )
+```
+
+##### Github Actions
+Запускаются проверки, пример: https://github.com/ilyinon/graduate_work/actions/runs/12713326064/job/35440964847
+![alt text](images/github.png)

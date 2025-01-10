@@ -1,10 +1,9 @@
 import datetime
 
 from core.logger import logger
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import HTTPException
 from models.promocodes import Promocodes
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 
 
 async def _validate_promocode(promocode, session):

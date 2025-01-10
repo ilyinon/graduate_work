@@ -3,6 +3,7 @@ from uuid import UUID, uuid4
 import pytest
 from alembic import command
 from alembic.config import Config
+from core.logger import logger
 from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -20,7 +21,6 @@ from tests.functional.settings import test_settings
 def engine():
     engine = create_engine(test_settings.database_dsn_not_async)
     ModelBase.metadata.create_all(bind=engine)
-
     yield engine
 
     # ModelBase.metadata.drop_all(bind=engine)

@@ -11,9 +11,6 @@ services:
       db_test_auth:
         condition: service_healthy
         restart: true
-      redis_test_auth:
-        condition: service_healthy
-        restart: true
 
   db_test_auth:
     image: postgres:16.3-alpine

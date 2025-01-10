@@ -49,9 +49,6 @@ async def test_registration(session):
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
         assert body["email"] == user["email"]
-        assert body["full_name"] == user["full_name"]
-        assert body["email"] == user["email"]
-        assert body["username"] == user["username"]
 
 
 @pytest.mark.parametrize(

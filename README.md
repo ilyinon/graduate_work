@@ -32,16 +32,6 @@ https://github.com/ilyinon/graduate_work
 5. При покупке, на purchase уходит ID выбранного тарифа и прмокод, по UUID пользователю ему будет ( после оплаты добавлен тариф). Во время покупки происходит использоание промокода ( увеличивается счётчик использований), если покупка не прошла - то счётчик откатывается.
 ```
 
-##### endpoints для доступа к сервисам
-```
-auth(API): http://localhost/api/v1/auth/openapi
-promocoes(API): http://localhost/api/v1/promocodes/openapi
-purchase(API): http://localhost/api/v1/purchase/openapi
-
-front: http://localhost:3000/
-adminka: http://localhost:3001/
-```
-
 
 #### Запуск решения
 ##### скопировать конфиг
@@ -52,10 +42,8 @@ cp .env_example .env
 ##### запустить infra и все приложения
 ```bash
 make infra
-make auth
 make all
 ```
-
 
 ###### Добавить пользователя с ролью admin
 ```bash
@@ -65,4 +53,219 @@ docker-compose exec -ti auth python cli/manage.py
 ###### Добавить сервисного пользователя, для межсервисного общения
 ```bash
 docker-compose exec -ti auth python cli/service.py
+```
+
+
+##### endpoints для доступа к сервисам
+```
+auth(API): http://localhost/api/v1/auth/openapi
+promocoes(API): http://localhost/api/v1/promocodes/openapi
+purchase(API): http://localhost/api/v1/purchase/openapi
+
+front: http://localhost:3000/
+adminka: http://localhost:3001/
+```
+
+#####  http://localhost/api/v1/promocodes/openapi
+![alt text](images/promocodes.png)
+
+```bash
+curl -X 'GET' \
+  'http://localhost/api/v1/promocodes/list/?skip=0&limit=100' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer <token>'
+```
+
+```bash
+[
+  {
+    "id": "8aa35a86-1be4-4e52-96de-caa24bc07db3",
+    "promocode": "FREE-STANDARD-FOR-ONE-MONTH",
+    "discount_percent": 0,
+    "discount_rubles": 399,
+    "start_date": "2025-01-01T00:00:00",
+    "end_date": "2025-12-31T00:00:00",
+    "usage_limit": 10,
+    "used_count": 0,
+    "is_active": true,
+    "is_one_time": false
+  },
+  {
+    "id": "331472ba-ae64-4df5-ae7d-2ffa8ee4dbd5",
+    "promocode": "MINUS-TEN-PERCENTS",
+    "discount_percent": 10,
+    "discount_rubles": 0,
+    "start_date": "2025-01-01T00:00:00",
+    "end_date": "2025-12-31T00:00:00",
+    "usage_limit": 0,
+    "used_count": 0,
+    "is_active": true,
+    "is_one_time": false
+  },
+  {
+    "id": "ea54ad6b-09ae-4048-9b5e-59db3c0d20e6",
+    "promocode": "MINUS100",
+    "discount_percent": 0,
+    "discount_rubles": 100,
+    "start_date": "2025-01-01T00:00:00",
+    "end_date": "2025-12-31T00:00:00",
+    "usage_limit": 0,
+    "used_count": 0,
+    "is_active": true,
+    "is_one_time": false
+  }
+]
+```
+
+```bash
+curl -X 'POST' \
+  'http://localhost/api/v1/promocodes/apply/MINUS100' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer <token>' \
+  -d ''
+```
+
+```bash
+{
+  "detail": "Промокод успешно применен"
+}
+```
+
+```bash
+curl -X 'POST' \
+  'http://localhost/api/v1/promocodes/revoke/MINUS100' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWU0NzMxMjMtMjFlOC00OGIxLWE1NTktNGQxZTc5YzAxNDBhIiwiZW1haWwiOiJzZXJ2aWNlQGNpbmVtYS5pbyIsInJvbGVzIjpbInNlcnZpY2UiXSwiZXhwIjoxNzY3NTI2MjQ5LCJqdGkiOiJjZjE5ODA5Mi04MmY4LTRlYTgtYWMwYi04YmRiNjg1NzFiMjIifQ.oYM8Afkua_33_50ttiiclMQs0Xdtc5fDAkN_ukAkZCs' \
+  -d ''
+```
+
+```bash
+{
+  "detail": "Использование промокода отменено"
+}
+```
+
+
+```bash
+curl -X 'GET' \
+  'http://localhost/api/v1/promocodes/validate/MINUS100' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWU0NzMxMjMtMjFlOC00OGIxLWE1NTktNGQxZTc5YzAxNDBhIiwiZW1haWwiOiJzZXJ2aWNlQGNpbmVtYS5pbyIsInJvbGVzIjpbInNlcnZpY2UiXSwiZXhwIjoxNzY3NTI2MjQ5LCJqdGkiOiJjZjE5ODA5Mi04MmY4LTRlYTgtYWMwYi04YmRiNjg1NzFiMjIifQ.oYM8Afkua_33_50ttiiclMQs0Xdtc5fDAkN_ukAkZCs'
+```
+
+```bash
+{
+  "promocode": "MINUS100",
+  "discount_percent": 0,
+  "discount_rubles": 100
+}
+```
+
+```bash
+curl -X 'POST' \
+  'http://localhost/api/v1/promocodes/generate/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWU0NzMxMjMtMjFlOC00OGIxLWE1NTktNGQxZTc5YzAxNDBhIiwiZW1haWwiOiJzZXJ2aWNlQGNpbmVtYS5pbyIsInJvbGVzIjpbInNlcnZpY2UiXSwiZXhwIjoxNzY3NTI2MjQ5LCJqdGkiOiJjZjE5ODA5Mi04MmY4LTRlYTgtYWMwYi04YmRiNjg1NzFiMjIifQ.oYM8Afkua_33_50ttiiclMQs0Xdtc5fDAkN_ukAkZCs' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "discount_percent": 15,
+  "discount_rubles": 0,
+  "start_date": "2025-01-10T16:10:18.928Z",
+  "end_date": "2025-12-31T16:10:18.928Z",
+  "usage_limit": 0,
+  "is_active": true,
+  "is_one_time": true
+}'
+```
+
+```bash
+{
+  "id": "90eabb83-ec68-41ef-80a0-cab4aa3b0fec",
+  "promocode": "XA7Q4EWMEGMY",
+  "discount_percent": 15,
+  "discount_rubles": 0,
+  "start_date": "2025-01-10T16:10:18.928000",
+  "end_date": "2025-12-31T16:10:18.928000",
+  "usage_limit": 0,
+  "used_count": 0,
+  "is_active": true,
+  "is_one_time": true
+}
+```
+
+
+```bash
+curl -X 'POST' \
+  'http://localhost/api/v1/promocodes/assign/' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWU0NzMxMjMtMjFlOC00OGIxLWE1NTktNGQxZTc5YzAxNDBhIiwiZW1haWwiOiJzZXJ2aWNlQGNpbmVtYS5pbyIsInJvbGVzIjpbInNlcnZpY2UiXSwiZXhwIjoxNzY3NTI2MjQ5LCJqdGkiOiJjZjE5ODA5Mi04MmY4LTRlYTgtYWMwYi04YmRiNjg1NzFiMjIifQ.oYM8Afkua_33_50ttiiclMQs0Xdtc5fDAkN_ukAkZCs' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "user_email": "user@cinema.io",
+  "promocode": "MINUS100"
+}'
+```
+
+```bash
+{
+  "success": true,
+  "message": "Промокод успешно применен к аккаунту пользователя"
+}
+```
+
+#####  http://localhost/api/v1/purchase/openapi
+
+![alt text](images/purchase.png)
+
+
+#####  http://localhost:3000 Front
+Добавлен тестовый фронт, где можно зарегистировать, залогиниться под пользователем, ввести промокод, увидеть цену со скидкой и "купить".
+![alt text](images/front1.png)
+![alt text](images/front2.png)
+
+#####  http://localhost:3001 Adminka
+Добавлена админка где можно залогиниться под админом ( добавляем скриптом).
+Доступно: генерация промокода, валидация, просмотр списка промокодов, а также назначение прмокодома пользователю вручную
+
+
+![alt text](images/adminka.png)
+
+![alt text](images/adminka0.png)
+![alt text](images/adminka1.png)
+
+![alt text](images/adminka_validate.png)
+
+![alt text](images/adminka_list.png)
+
+![alt text](images/adminka_assign.png)
+
+
+
+##### Запуск тестов
+
+```bash
+make promocodes
+```
+
+```bash
+============================= test session starts ==============================
+platform linux -- Python 3.12.8, pytest-7.4.3, pluggy-1.5.0 -- /usr/local/bin/python3
+cachedir: .pytest_cache
+rootdir: /opt
+plugins: asyncio-0.23.8, mock-resources-2.12.1, Faker-30.1.0, postgresql-6.1.1, alembic-0.11.1, anyio-4.8.0
+asyncio: mode=Mode.STRICT
+collecting ... collected 10 items
+
+tests/functional/src/auth/test_promocodes.py::test_validate_promocode PASSED [ 10%]
+tests/functional/src/auth/test_promocodes.py::test_invalid_promocode PASSED [ 20%]
+tests/functional/src/auth/test_promocodes.py::test_list_promocodes PASSED [ 30%]
+tests/functional/src/auth/test_promocodes.py::test_apply_promocode PASSED [ 40%]
+tests/functional/src/auth/test_promocodes.py::test_apply_invalid_promocode PASSED [ 50%]
+tests/functional/src/auth/test_promocodes.py::test_revoke_promocode PASSED [ 60%]
+tests/functional/src/auth/test_promocodes.py::test_revoke_invalid_promocode PASSED [ 70%]
+tests/functional/src/auth/test_promocodes.py::test_generate_promocode PASSED [ 80%]
+tests/functional/src/auth/test_promocodes.py::test_invalid_generate_promocode PASSED [ 90%]
+tests/functional/src/auth/test_promocodes.py::test_assign_promocode PASSED [100%]
+
+======================== 10 passed, 4 warnings in 1.71s ========================
 ```

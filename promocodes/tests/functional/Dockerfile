@@ -27,7 +27,5 @@ RUN mv /opt/tests/functional/conftest.py /opt/tests/conftest.py && \
 ENTRYPOINT \
   find /opt && \
   python3 tests/utils/wait_for_pg.py && \
-  echo "!!!!!!!!!!!!!!!!!!!!" && \
   alembic upgrade head && find /opt/ && \
-  sleep 3600 && \
   python3 -m pytest tests -vvv --disable-warnings

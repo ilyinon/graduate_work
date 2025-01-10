@@ -29,3 +29,19 @@ services:
     ports:
       - "11432:5432"
 
+
+  test_promocodes_app:
+    build: promocodes
+    env_file:
+      - ./.env_test
+    restart: unless-stopped
+    healthcheck:
+      test: bash -c "exec 6<> /dev/tcp/localhost/8000"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    depends_on:
+      db_test_promocodes:
+        condition: service_healthy
+        restart: true
+    ports: []

@@ -30,7 +30,7 @@ class TestSettings(BaseSettings):
     jwt_refresh_token_expires_in_days: int = 30
 
     app_dsn: str = "http://auth:8000"
-    promocodes_dsn: str = "http://promocodes:8000"
+    promocodes_dsn: str = "http://test_promocodes_app:8000"
     promocode_service_token: str
 
     @property

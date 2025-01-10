@@ -1,7 +1,6 @@
 # from logging.config import fileConfig
 
 from alembic import context
-from core.config import promocodes_settings
 from models.base import ModelBase
 from models.promocodes import Promocodes, UserPromocode
 from models.purchase import Purchase, Tariff, UserTariff
@@ -10,13 +9,14 @@ from models.session import Session
 from models.token import Token
 from models.user import User
 from sqlalchemy import engine_from_config, pool
+from tests.functional.settings import test_settings
 
 config = context.config
 
 from models.base import ModelBase
 
 target_metadata = ModelBase.metadata
-config.set_main_option("sqlalchemy.url", promocodes_settings.database_dsn_not_async)
+config.set_main_option("sqlalchemy.url", test_settings.database_dsn_not_async)
 
 target_metadata = ModelBase.metadata
 

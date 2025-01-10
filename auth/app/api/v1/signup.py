@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi.security import HTTPBearer, OAuth2AuthorizationCodeBearer
 from schemas.base import HTTPExceptionResponse, HTTPValidationError
-from schemas.user import UserCreate, UserResponse, UserRegisterResponse
+from schemas.user import UserCreate, UserRegisterResponse, UserResponse
 from services.user import UserService, get_user_service
 
 get_token = HTTPBearer(auto_error=False)
@@ -37,7 +37,7 @@ async def signup(
     logger.info(f"Requested /signup with {user_create}")
     if not await user_service.get_user_by_email(user_create.email):
         user_create.username = await user_service.create_user_username()
-
+        logger.info(f"start to create user {user_create.username}")
         created_new_user = await user_service.create_user(user_create)
         return created_new_user
     raise HTTPException(

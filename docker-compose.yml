@@ -17,22 +17,6 @@ services:
       retries: 10
     ports: []
 
-  elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-    restart: unless-stopped
-    volumes:
-      - elastic_data:/usr/share/elasticsearch/data
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-    healthcheck:
-      test: curl -s http://${ELASTIC_HOST}:${ELASTIC_PORT} >/dev/null || exit 1
-      interval: 5s
-      timeout: 3s
-      retries: 20
-    ports: []
-
   redis:
     image: redis:7.4.0
     restart: unless-stopped
@@ -62,17 +46,10 @@ services:
       timeout: 3s
       retries: 10
 
-  jaeger:
-    image: jaegertracing/all-in-one:1.62.0
-    restart: unless-stopped
-    ports: []
-
-
 
 
 volumes:
   pg_data:
   redis_data:
-  elastic_data:
   media:
   static:

@@ -22,7 +22,8 @@ class User(ModelBase, TimestampMixin, IdMixin):
     tokens = relationship(
         "Token", back_populates="user", lazy="selectin", cascade="all, delete-orphan"
     )
-    user_promocodes = relationship("UserPromocodes", back_populates="user")
+    # user_promocodes = relationship(
+    #     "UserPromocode", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
 
     social_accounts = relationship(
         "UserSocialAccount",

@@ -4,6 +4,7 @@ from uuid import uuid4
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 ModelBase = declarative_base()
 
@@ -25,6 +26,9 @@ class User(ModelBase, TimestampMixin, IdMixin):
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255))
 
+    user_tariff = relationship("UserTariff", back_populates="user", lazy="selectin")
+    purchase = relationship("Purchase", back_populates="user", lazy="selectin")
+
 
 class Tariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "tariffs"
@@ -32,6 +36,9 @@ class Tariff(ModelBase, IdMixin, TimestampMixin):
     name = Column(String)
     description = Column(String)
     price = Column(Float, nullable=False)
+
+    purchase = relationship("Purchase", back_populates="tariff")
+    user_tariff = relationship("UserTariff", back_populates="tariff")
 
 
 class UserTariff(ModelBase, IdMixin, TimestampMixin):
@@ -43,8 +50,8 @@ class UserTariff(ModelBase, IdMixin, TimestampMixin):
         UUID(as_uuid=True), ForeignKey("tariffs.id", ondelete="CASCADE"), nullable=False
     )
 
-    # tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
-    # user = relationship("User", back_populates="roles", lazy="selectin")
+    tariff = relationship("Tariff", back_populates="user_tariff", lazy="selectin")
+    user = relationship("User", back_populates="user_tariff", lazy="selectin")
 
 
 class Purchase(ModelBase, IdMixin, TimestampMixin):
@@ -61,5 +68,5 @@ class Purchase(ModelBase, IdMixin, TimestampMixin):
     failure_reason = Column(String, nullable=True)
     promocode_code = Column(String, nullable=True)
 
-    # tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
-    # user = relationship("User", back_populates="roles", lazy="selectin")
+    tariff = relationship("Tariff", back_populates="purchase", lazy="selectin")
+    user = relationship("User", back_populates="purchase", lazy="selectin")

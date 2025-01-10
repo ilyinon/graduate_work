@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function AssignPromocode() {
-  const [userId, setUserId] = useState('');
+  const [user_email, setUserEmail] = useState('');
   const [promocode, setPromocode] = useState('');
   const [message, setMessage] = useState('');
 
@@ -12,9 +12,9 @@ function AssignPromocode() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        'http://localhost/api/v1/promocodes/assign',
+        'http://localhost/api/v1/promocodes/assign/',
         {
-          user_id: userId,
+          user_email: user_email,
           promocode: promocode,
         },
         {
@@ -39,11 +39,11 @@ function AssignPromocode() {
       {message && <p>{message}</p>}
       <form onSubmit={handleSubmit}>
         <div>
-          <label>ID пользователя:</label>
+          <label>Email пользователя:</label>
           <input
-            type="number"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
+            type="text"
+            value={user_email}
+            onChange={(e) => setUserEmail(e.target.value)}
             required
           />
         </div>

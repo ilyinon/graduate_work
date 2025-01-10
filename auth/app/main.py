@@ -23,7 +23,13 @@ if auth_settings.enable_tracer:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["null", "http://localhost", "http://localhost:8000", "http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[
+        "null",
+        "http://localhost",
+        "http://localhost:8000",
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -46,17 +52,8 @@ async def before_request(request: Request, call_next):
     request_id = request.headers.get("X-Request-Id")
     if not request_id:
         request_id = str(uuid.uuid4())
-    # if not request_id:
-    #     return ORJSONResponse(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         content={"detail": "X-Request-Id is required"},
-    #     )
     return await call_next(request)
 
-
-# @app.get("/api/openapi", include_in_schema=False)
-# async def get_documentation():
-#     return get_swagger_ui_html(openapi_url="/api/openapi.json", title="Swagger")
 
 app.include_router(signup.router, prefix="/api/v1/auth")
 app.include_router(auth.router, prefix="/api/v1/auth")

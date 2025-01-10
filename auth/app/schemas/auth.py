@@ -1,4 +1,4 @@
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional
 
 from pydantic import ConfigDict, Field, TypeAdapter
 from schemas.base import OrjsonBaseModel

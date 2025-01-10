@@ -8,6 +8,7 @@ from schemas.base import OrjsonBaseModel
 class RegisterUserBase(OrjsonBaseModel):
     email: EmailStr
 
+
 class UserBase(OrjsonBaseModel):
     email: EmailStr
     username: str = Field(title="Username")
@@ -30,10 +31,11 @@ class UserResponse(UserBase):
         orm_mode = True
         from_attributes = True
 
+
 class UserRegisterResponse(OrjsonBaseModel):
     id: UUID
     email: EmailStr
-    
+
     class Config:
         orm_mode = True
         from_attributes = True

@@ -2,14 +2,14 @@
 
 from alembic import context
 from core.config import auth_settings
-from sqlalchemy import engine_from_config, pool
 from models.base import ModelBase
-from models.user import User
+from models.promocodes import Promocodes, UserPromocode
+from models.purchase import Purchase, Tariff, UserTariff
 from models.role import Role, UserRole
-from models.token import Token
 from models.session import Session
-from models.purchase import Tariff, UserTariff, Purchase
-from models.promocodes import Promocodes
+from models.token import Token
+from models.user import User
+from sqlalchemy import engine_from_config, pool
 
 config = context.config
 

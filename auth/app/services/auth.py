@@ -12,7 +12,6 @@ from fastapi import Depends
 from models.role import Role, UserRole
 from models.token import Token
 from models.user import User
-
 # from services.user import User
 from pydantic import EmailStr
 from redis.asyncio import Redis

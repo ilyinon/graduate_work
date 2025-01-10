@@ -1,9 +1,9 @@
 from models.base import ModelBase
 from models.mixin import IdMixin, TimestampMixin
-from models.base import ModelBase
-from sqlalchemy import Column, ForeignKey, String, Float, Boolean
+from sqlalchemy import Boolean, Column, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
 
 class Tariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "tariffs"
@@ -11,6 +11,7 @@ class Tariff(ModelBase, IdMixin, TimestampMixin):
     name = Column(String)
     description = Column(String)
     price = Column(Float, nullable=False)
+
 
 class UserTariff(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "user_tariff"
@@ -23,6 +24,7 @@ class UserTariff(ModelBase, IdMixin, TimestampMixin):
 
     tariff = relationship("Tariff", back_populates="tariff", lazy="selectin")
     user = relationship("User", back_populates="roles", lazy="selectin")
+
 
 class Purchase(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "purchases"

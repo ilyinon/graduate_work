@@ -20,15 +20,16 @@ class Promocodes(ModelBase, IdMixin, TimestampMixin):
     is_active = Column(Boolean, default=True)
     is_one_time = Column(Boolean, default=True)
 
+    user_to_promocodes = relationship("UserPromocodes", back_populates="promocodes")
 
-    user_promocodes = relationship("UserPromocodes", back_populates="promocode")
 
-
-class UserPromocodes(ModelBase, IdMixin, TimestampMixin):
+class UserPromocode(ModelBase, IdMixin, TimestampMixin):
     __tablename__ = "user_promocodes"
 
-    user_id = Column(UUID, ForeignKey('users.id'), nullable=False)
+    user_id = Column(UUID, ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
     promocode_id = Column(UUID, ForeignKey('promocodes.id'), nullable=False)
 
-    user = relationship("Users", back_populates="user_promocodes")
-    promocode = relationship("Promocodes", back_populates="user_promocodes")
+
+    user = relationship("User", back_populates="user_promocodes", lazy="selectin")
+    promocodes = relationship("Promocodes", back_populates="user_to_promocodes", lazy="selectin")
+

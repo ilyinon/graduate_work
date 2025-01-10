@@ -37,7 +37,7 @@ async def signup(
     logger.info(f"Requested /signup with {user_create}")
     if not await user_service.get_user_by_email(user_create.email):
         user_create.username = await user_service.create_user_username()
-
+        logger.info(f"start to create user {user_create.username}")
         created_new_user = await user_service.create_user(user_create)
         return created_new_user
     raise HTTPException(

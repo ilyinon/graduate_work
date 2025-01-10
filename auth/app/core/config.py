@@ -68,7 +68,7 @@ class AuthSettings(BaseSettings):
 
     log_level: bool = False
 
-    enable_tracer: bool = True
+    enable_tracer: bool = False
     jaeger_agent_host: str = "jaeger"
     jaeger_agent_port: int = 6831
 

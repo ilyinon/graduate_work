@@ -26,6 +26,7 @@ class UserService:
     async def get_user_by_email(self, email: EmailStr) -> Optional[UserResponse]:
         logger.info(f"Checking if user with email {email} exists")
         user = await self.db.get_by_key("email", email, User)
+        logger.info(f"User is {user}")
         if user:
             return UserResponseLogin.from_orm(user)
         return None

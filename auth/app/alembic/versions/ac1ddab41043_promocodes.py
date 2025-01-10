@@ -44,8 +44,8 @@ def upgrade() -> None:
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('modified_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['promocode_id'], ['promocodes.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['promocode_id'], ['promocodes.id'], ondelete="CASCADE"),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete="CASCADE"),
     sa.PrimaryKeyConstraint('id')
     )
     now = datetime.utcnow()

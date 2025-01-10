@@ -54,6 +54,15 @@ adminka: adminka_dir
 adminka_dir:
 	@:
 
+test_promocodes:
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f promocodes/tests/functional/docker-compose.yml stop db_test_promocodes
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f promocodes/tests/functional/docker-compose.yml rm db_test_promocodes -f
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f promocodes/tests/functional/docker-compose.yml up db_test_promocodes -d
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f promocodes/tests/functional/docker-compose.yml stop test_promocodes
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f promocodes/tests/functional/docker-compose.yml rm --force test_promocodes
+	docker-compose -f docker-compose.yml -f docker-compose.override.yml -f promocodes/tests/functional/docker-compose.yml up --build -d
+	docker logs graduate_work-test_promocodes-1 -f
+
 
 all:
 	$(MAKE) infra

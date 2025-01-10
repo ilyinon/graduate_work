@@ -1,13 +1,11 @@
-from datetime import datetime, timedelta
-
 import pytest
-from app.db.pg import get_session
+from httpx import AsyncClient
 from app.main import app
 from app.models.promocodes import Promocodes
-from httpx import AsyncClient
+from datetime import datetime, timedelta
+from app.db.pg import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
-
 
 @pytest.mark.asyncio
 async def test_valid_promocode(initialized_test_db):

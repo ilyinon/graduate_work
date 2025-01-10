@@ -13,20 +13,21 @@ RUN  pip install --upgrade pip \
      && pip install --no-cache-dir -r /opt/requirements.txt
 
 COPY tests/functional/ /opt/tests/functional
-COPY app/models/* /opt/tests/models/
-COPY app/alembic /opt/alembic
-COPY app/alembic.ini /opt/
+COPY tests/src/models/* /opt/tests/models/
+COPY tests/src/alembic /opt/alembic
+COPY tests/src/alembic.ini /opt/
 COPY tests/core /opt/tests/core
 COPY tests/utils /opt/tests/utils
-COPY tests/alembic/env.py /opt/alembic/env.py
+COPY tests/src/alembic/env.py /opt/alembic/env.py
 
 RUN mv /opt/tests/functional/conftest.py /opt/tests/conftest.py && \
     mv /opt/tests/functional/fixtures /opt/tests/ && \
-    chmod -R 755 /opt/tests && \
-    sed -i 's/app.models./tests.models./g' /opt/tests/models/*
+    chmod -R 755 /opt/tests
 
 ENTRYPOINT \
   find /opt && \
   python3 tests/utils/wait_for_pg.py && \
-  # alembic upgrade head && find /opt/ && \
+  echo "!!!!!!!!!!!!!!!!!!!!" && \
+  alembic upgrade head && find /opt/ && \
+  sleep 3600 && \
   python3 -m pytest tests -vvv --disable-warnings

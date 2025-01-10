@@ -1,21 +1,18 @@
 services:
-  test_auth:
+  test_promocodes:
     build:
-      context: auth
+      context: promocodes
       dockerfile: tests/functional/Dockerfile
     env_file:
       - ./.env_test
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      db_test_auth:
-        condition: service_healthy
-        restart: true
-      redis_test_auth:
+      db_test_promocodes:
         condition: service_healthy
         restart: true
 
-  db_test_auth:
+  db_test_promocodes:
     image: postgres:16.3-alpine
     restart: unless-stopped
     env_file:
@@ -23,23 +20,12 @@ services:
     environment:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DB}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PG_USER}"]
       interval: 5s
       timeout: 5s
       retries: 10
     ports:
-      - "15432:5432"
+      - "11432:5432"
 
-  redis_test_auth:
-    image: redis:7.4.0
-    restart: unless-stopped
-    env_file:
-      - ./.env_test
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-    ports:
-      - "16379:6379"

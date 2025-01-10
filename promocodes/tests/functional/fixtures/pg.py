@@ -9,7 +9,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.sql import text
 from tests.models.base import ModelBase
 from tests.models.user import User
-
+from core.logger import logger
 Base = declarative_base()
 
 from tests.functional.settings import test_settings
@@ -20,7 +20,7 @@ from tests.functional.settings import test_settings
 def engine():
     engine = create_engine(test_settings.database_dsn_not_async)
     ModelBase.metadata.create_all(bind=engine)
-
+    logger.info("=======")
     yield engine
 
     # ModelBase.metadata.drop_all(bind=engine)

@@ -3,7 +3,6 @@ from functools import wraps
 from socket import gaierror
 
 import psycopg2
-import redis
 from urllib3.exceptions import ConnectTimeoutError, MaxRetryError
 from utils.logger import logger
 
@@ -35,7 +34,6 @@ def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=30):
                     ConnectTimeoutError,
                     psycopg2.OperationalError,
                     MaxRetryError,
-                    redis.ConnectionError,
                     gaierror,
                 ) as error:
                     logger.error(error)

@@ -1,7 +1,6 @@
 import psycopg2
 from functional.settings import test_settings
 from utils.backoff import backoff
-from utils.logger import logger
 
 
 @backoff()

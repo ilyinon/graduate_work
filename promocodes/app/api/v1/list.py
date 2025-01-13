@@ -30,5 +30,6 @@ async def get_promocodes_list(
     except SQLAlchemyError as e:
         logger.info(f"error to get promocodes: {e}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Ошибка при получении списка промокодов"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при получении списка промокодов",
         )

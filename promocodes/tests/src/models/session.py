@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from models.base import ModelBase
-from models.mixin import IdMixin, TimestampMixin
+from models.mixin import TimestampMixin
 from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship

@@ -4,6 +4,7 @@ from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.views.generic.detail import BaseDetailView
 from django.views.generic.list import BaseListView
+
 from movies.models import FilmWork, Roles
 
 PAGINATE_MOVIES_PER_PAGE = 50

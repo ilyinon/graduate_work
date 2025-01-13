@@ -5,8 +5,6 @@ import typer
 from core.logger import logger
 from db.pg import async_session
 from models.role import Role, UserRole
-from models.session import Session
-from models.token import Token
 from models.user import User
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession

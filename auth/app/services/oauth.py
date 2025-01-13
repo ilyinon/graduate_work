@@ -158,7 +158,7 @@ class OAuthService:
             return user_info_response.json()
 
 
-@lru_cache()
+@lru_cache
 def get_oauth_service(
     auth_service: AuthService = Depends(get_auth_service),
     user_service: UserService = Depends(get_user_service),

@@ -5,10 +5,6 @@ from faker import Faker
 from tests.functional.settings import test_settings
 
 pytestmark = pytest.mark.asyncio
-from sqlalchemy import create_engine, select
-from tests.models.role import Role, UserRole
-from tests.models.session import Session
-from tests.models.token import Token
 from tests.models.user import User
 
 fake = Faker()

@@ -151,7 +151,7 @@ class UserService:
         return secrets.randbelow(10**16 - 10**15) + 10**15
 
 
-@lru_cache()
+@lru_cache
 def get_user_service(db_session: AsyncSession = Depends(get_session)) -> UserService:
 
     db_engine = PostgresqlEngine(db_session)

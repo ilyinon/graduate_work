@@ -1,13 +1,11 @@
 pytest_plugins = "tests.fixtures"
 
-import asyncio
 import json
 
-import aiohttp
 import pytest
-import pytest_asyncio
 from elasticsearch import Elasticsearch
 from redis.asyncio import Redis
+
 from tests.functional.settings import settings
 from tests.functional.testdata.elastic import GENRE_INDEX, MOVIES_INDEX, PERSON_INDEX
 from tests.functional.testdata.genres import GENRES_DATA

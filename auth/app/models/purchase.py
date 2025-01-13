@@ -1,8 +1,9 @@
-from models.base import ModelBase
-from models.mixin import IdMixin, TimestampMixin
 from sqlalchemy import Boolean, Column, Float, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
+from models.base import ModelBase
+from models.mixin import IdMixin, TimestampMixin
 
 
 class Tariff(ModelBase, IdMixin, TimestampMixin):

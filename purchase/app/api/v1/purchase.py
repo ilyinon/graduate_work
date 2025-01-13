@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
+import httpx
 import requests
 from core.config import purchase_settings
 from core.logger import logger
@@ -145,14 +146,14 @@ async def create_purchase(
         await db.commit()
         if promocode:
             try:
-                response = requests.post(
-                    f"{purchase_settings.promocode_service_url}/apply/{promocode}",
-                    headers=headers,
-                )
-                response.raise_for_status()
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        f"{purchase_settings.promocode_service_url}/apply/{promocode}",
+                        headers=headers,
+                    )
+                    response.raise_for_status()
             except Exception as e:
                 logger.info(f"the error to use promocode: {e}")
-                pass
 
         return {"detail": "Покупка успешно совершена", "amount": amount}
 
@@ -161,12 +162,14 @@ async def create_purchase(
         await db.commit()
         if promocode:
             try:
-                response = requests.post(
-                    f"{purchase_settings.promocode_service_url}/revoke/{promocode}",
-                    headers=headers,
-                )
-                response.raise_for_status()
-            except requests.HTTPError as e:
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        f"{purchase_settings.promocode_service_url}/revoke/{promocode}",
+                        headers=headers,
+                    )
+                    response.raise_for_status()
+
+            except requests.HTTPError:
                 pass
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка оплаты")
 
@@ -177,11 +180,12 @@ async def check_promocode(promocode: str) -> float:
 
     if promocode:
         try:
-            response = requests.get(
-                f"{purchase_settings.promocode_service_url}/validate/{promocode}",
-                headers=headers,
-            )
-            response.raise_for_status()
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{purchase_settings.promocode_service_url}/validate/{promocode}",
+                    headers=headers,
+                )
+                response.raise_for_status()
             promocode_data = response.json()
             return promocode_data
 

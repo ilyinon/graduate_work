@@ -2,6 +2,7 @@ import http
 import random
 
 import pytest
+
 from tests.functional.settings import settings
 from tests.functional.testdata.genres import GENRES_DATA
 

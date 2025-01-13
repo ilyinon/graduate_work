@@ -61,7 +61,7 @@ class SessionService:
         await self.db.delete(session_id, Session)
 
 
-@lru_cache()
+@lru_cache
 def get_session_service(
     db_session: AsyncSession = Depends(get_session),
 ) -> SessionService:

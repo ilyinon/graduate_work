@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Any, List, Optional
 from uuid import UUID
 
-from models.base import ModelBase
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 

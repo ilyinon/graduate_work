@@ -1,8 +1,7 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from pydantic import ConfigDict, Field, TypeAdapter
+from pydantic import Field
 from schemas.base import OrjsonBaseModel
-from typing_extensions import TypedDict
 
 
 class Credentials(OrjsonBaseModel):

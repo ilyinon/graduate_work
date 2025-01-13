@@ -1,16 +1,8 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Float,
-    ForeignKey,
-    Integer,
-    Null,
-    String,
-)
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        Null, String)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -18,11 +10,11 @@ from sqlalchemy.orm import relationship
 ModelBase = declarative_base()
 
 
-class IdMixin(object):
+class IdMixin:
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
 
 
-class TimestampMixin(object):
+class TimestampMixin:
     created_at = Column(DateTime, default=datetime.now())
     modified_at = Column(DateTime, onupdate=datetime.now(), default=datetime.now())
 

@@ -1,6 +1,6 @@
 from core.logger import logger
 from db.pg import get_session, get_session_local
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from helpers.auth import get_current_user
 from helpers.validate import _validate_promocode
 from models.promocodes import Promocodes
@@ -27,7 +27,9 @@ async def apply_promocode(
     )
     promocode = result.scalars().first()
     if not promocode:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Промокод не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Промокод не найден"
+        )
     promocode.used_count += 1
     await db.commit()
     return {"detail": "Промокод успешно применен"}

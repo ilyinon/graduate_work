@@ -172,7 +172,7 @@ class FilmService:
         return [Film(**get_film) for get_film in films_list]
 
 
-@lru_cache()
+@lru_cache
 def get_film_service(
     redis: Redis = Depends(get_redis),
     elastic: AsyncElasticsearch = Depends(get_elastic),

@@ -61,6 +61,9 @@ async def generate_promocode(
     except SQLAlchemyError as e:
         await db.rollback()
         logger.error(f"Error creating promocode: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Ошибка при создании промокода")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при создании промокода",
+        )
 
     return new_promocode

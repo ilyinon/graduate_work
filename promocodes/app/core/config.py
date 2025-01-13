@@ -2,8 +2,9 @@ import os
 from logging import config as logging_config
 
 from async_fastapi_jwt_auth import AuthJWT
-from core.logger import LOGGING
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from core.logger import LOGGING
 
 DOTENV = os.path.abspath(os.path.join(os.path.dirname(__file__), "../..", ".env"))
 

@@ -265,7 +265,7 @@ class AuthService:
         return True
 
 
-@lru_cache()
+@lru_cache
 def get_auth_service(
     db_session: AsyncSession = Depends(get_session),
     redis: Redis = Depends(get_redis),

@@ -2,7 +2,6 @@ import http
 import random
 
 import pytest
-
 from tests.functional.settings import settings
 from tests.functional.testdata.persons import PERSONS_DATA
 

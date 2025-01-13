@@ -1,7 +1,7 @@
-from redis.client import Redis
 from functional.settings import settings
 from functional.utils.backoff import backoff
 from functional.utils.logger import logger
+from redis.client import Redis
 
 
 @backoff()

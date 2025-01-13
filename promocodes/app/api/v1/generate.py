@@ -3,7 +3,7 @@ import string
 
 from core.logger import logger
 from db.pg import get_session
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from helpers.auth import get_current_user
 from models.promocodes import Promocodes
 from schemas.promocodes import PromocodeCreate, PromocodeOut
@@ -61,6 +61,6 @@ async def generate_promocode(
     except SQLAlchemyError as e:
         await db.rollback()
         logger.error(f"Error creating promocode: {e}")
-        raise HTTPException(status_code=500, detail="Ошибка при создании промокода")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Ошибка при создании промокода")
 
     return new_promocode

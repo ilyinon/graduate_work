@@ -1,6 +1,6 @@
 from core.logger import logger
 from db.pg import get_session
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from helpers.auth import get_current_user
 from models.promocodes import Promocodes
 from sqlalchemy import select
@@ -24,7 +24,7 @@ async def revoke_promocode(
     )
     promocode = result.scalars().first()
     if not promocode:
-        raise HTTPException(status_code=404, detail="Промокод не найден")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Промокод не найден")
     if promocode.used_count > 0:
         promocode.used_count -= 1
         await db.commit()

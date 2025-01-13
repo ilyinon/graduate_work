@@ -10,7 +10,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import httpx
-import requests
 from core.config import purchase_settings
 from core.logger import logger
 from db.pg import get_session
@@ -164,7 +163,7 @@ async def create_purchase(
                     )
                     response.raise_for_status()
             except Exception as e:
-                logger.info(f"the error to use promocode: {e}")
+                logger.error(f"promocode service didn't response correctly: {e}")
 
         return {"detail": "Покупка успешно совершена", "amount": amount}
 
@@ -179,9 +178,8 @@ async def create_purchase(
                         headers=headers,
                     )
                     response.raise_for_status()
-
-            except requests.HTTPError:
-                pass
+            except Exception as e:
+                logger.error(f"promocode service didn't response correctly: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка оплаты"
         )
@@ -193,25 +191,15 @@ async def check_promocode(promocode: str) -> float:
     if promocode:
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.post(
+                response = await client.get(
                     f"{purchase_settings.promocode_service_url}/validate/{promocode}",
                     headers=headers,
                 )
                 response.raise_for_status()
             promocode_data = response.json()
             return promocode_data
-
-        except requests.HTTPError as e:
-            try:
-                detail = e.response.json().get("detail", "Промокод не действует")
-            except:
-                detail = "Промокод не действует"
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Ошибка промокода: {detail}",
-            )
         except Exception as e:
-            logger.error(f"promocode service doesn't response: {e}")
+            logger.error(f"promocode service didn't response correctly: {e}")
         return None
 
 

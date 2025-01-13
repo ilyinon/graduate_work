@@ -12,7 +12,6 @@ user_data = {
 
 
 def create_token(user_data):
-
     expires_time = datetime.now(tz=timezone.utc) + timedelta(seconds=86400 * 30 * 12)
     payload = {
         "user_id": user_data["user_id"],
@@ -30,5 +29,4 @@ def create_token(user_data):
 
 
 if __name__ == "__main__":
-
     print(create_token(user_data))

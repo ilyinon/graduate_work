@@ -1,12 +1,9 @@
 import pytest
 from alembic import command
 from alembic.config import Config
-from core.logger import logger
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy.sql import text
 from tests.models.base import ModelBase
-from tests.models.user import User
 
 Base = declarative_base()
 

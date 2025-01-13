@@ -1,0 +1,9 @@
+[tool.ruff.lint]
+select = ["I", "F", "E"]
+
+
+[tool.ruff.lint.isort]
+
+section-order = ["future", "standard-library", "first-party", "local-folder", "third-party"]
+known-third-party = ["promocodes", "purchase", "core", "api", "db", "helpers", "models"]
+known-first-party = ["fastapi", "sqlalchemy", "pydantic"]

@@ -1,5 +1,4 @@
-from random import randint
-from typing import Annotated, List, Literal, LiteralString, Optional, Union
+from typing import Annotated, Optional, Union
 from uuid import UUID
 
 from core.logger import logger
@@ -11,7 +10,6 @@ from schemas.base import HTTPExceptionResponse, HTTPValidationError
 from schemas.session import SessionCreate, SessionUpdate
 from services.auth import AuthService, get_auth_service
 from services.session import SessionService, get_session_service
-from services.user import UserService, get_user_service
 
 get_token = HTTPBearer(auto_error=False)
 
@@ -162,7 +160,6 @@ async def refresh_tokens(
                 logger.info(f"get user to refresh: {user}")
 
                 if user:
-
                     tokens = await auth_service.refresh_tokens(refresh_token)
                     add_session = {
                         "user_id": UUID(decoded_token["user_id"]),

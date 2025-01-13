@@ -1,7 +1,6 @@
 import psycopg2
 from functional.settings import test_settings
 from utils.backoff import backoff
-from utils.logger import logger
 
 
 @backoff()
@@ -20,5 +19,4 @@ def wait_for_pg():
 
 
 if __name__ == "__main__":
-
     wait_for_pg()

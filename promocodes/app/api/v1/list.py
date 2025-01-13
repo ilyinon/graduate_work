@@ -1,14 +1,15 @@
 from typing import List
 
-from core.logger import logger
-from db.pg import get_session
-from fastapi import APIRouter, Depends, HTTPException, Query
-from helpers.auth import get_current_user
-from models.promocodes import Promocodes
-from schemas.promocodes import PromocodeOut
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
+from core.logger import logger
+from db.pg import get_session
+from helpers.auth import get_current_user
+from models.promocodes import Promocodes
+from schemas.promocodes import PromocodeOut
 
 router = APIRouter()
 
@@ -30,5 +31,6 @@ async def get_promocodes_list(
     except SQLAlchemyError as e:
         logger.info(f"error to get promocodes: {e}")
         raise HTTPException(
-            status_code=500, detail="Ошибка при получении списка промокодов"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ошибка при получении списка промокодов",
         )

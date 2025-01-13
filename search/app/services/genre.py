@@ -69,12 +69,11 @@ class GenreService:
         return genres
 
 
-@lru_cache()
+@lru_cache
 def get_genre_service(
     redis: Redis = Depends(get_redis),
     elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> GenreService:
-
     redis_cache_engine = RedisCacheEngine(redis)
     cache_engine = BaseCache(redis_cache_engine)
 

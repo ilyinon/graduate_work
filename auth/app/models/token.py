@@ -1,11 +1,12 @@
 from datetime import datetime
 from uuid import uuid4
 
-from models.base import ModelBase
-from models.mixin import IdMixin
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
+from models.base import ModelBase
+from models.mixin import IdMixin
 
 
 class Token(ModelBase, IdMixin):

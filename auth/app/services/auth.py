@@ -12,6 +12,7 @@ from fastapi import Depends
 from models.role import Role, UserRole
 from models.token import Token
 from models.user import User
+
 # from services.user import User
 from pydantic import EmailStr
 from redis.asyncio import Redis
@@ -68,7 +69,6 @@ class AuthService:
     async def create_tokens(
         self, user: User, is_exist: bool = True, user_data={}
     ) -> TwoTokens:
-
         access_token = await self.create_token(user_data, False)
         logger.info(f"access token is {access_token}")
 
@@ -264,12 +264,11 @@ class AuthService:
         return True
 
 
-@lru_cache()
+@lru_cache
 def get_auth_service(
     db_session: AsyncSession = Depends(get_session),
     redis: Redis = Depends(get_redis),
 ) -> AuthService:
-
     db_engine = PostgresqlEngine(db_session)
     base_db = BaseDb(db_engine)
     return AuthService(base_db, redis)

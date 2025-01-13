@@ -5,8 +5,6 @@ import typer
 from core.logger import logger
 from db.pg import async_session
 from models.role import Role, UserRole
-from models.session import Session
-from models.token import Token
 from models.user import User
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +21,6 @@ async def get_user_by_email(db: AsyncSession, email: str) -> UUID:
 
 
 async def create_user_by_email(db: AsyncSession, email: str) -> bool:
-
     username = typer.prompt("Enter username for a new user")
     full_name = f"admin {username}"
     password = typer.prompt(

@@ -1,6 +1,6 @@
 import base64
 import json
-from typing import Any, Dict
+from typing import Any
 
 import httpx
 from config.settings import AUTH_API_LOGIN_URL
@@ -42,7 +42,7 @@ class CinemaBackend(BaseBackend):
                 # user = User.objects.get(**user_data)
                 user, created = User.objects.update_or_create(**user_data)
                 user.save()
-            except Exception as e:
+            except Exception:
                 return None
             return user
         else:

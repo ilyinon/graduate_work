@@ -14,7 +14,6 @@ async def test_genres_search(session, es_client, genres_index_create, genres_dat
     url = url_template.format(service_url=settings.app_dsn)
 
     async with session.get(url) as response:
-
         body = await response.json()
 
         assert response.status == http.HTTPStatus.OK
@@ -29,7 +28,6 @@ async def test_get_genre_by_id(
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.OK
 
 
@@ -43,7 +41,6 @@ async def test_get_genre_by_not_existen_id(
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.NOT_FOUND
 
 
@@ -57,7 +54,6 @@ async def test_get_genre_by_invalid_id(
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.UNPROCESSABLE_ENTITY
 
 
@@ -69,5 +65,4 @@ async def test_get_genre_by_id(
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.OK

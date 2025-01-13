@@ -22,7 +22,6 @@ class FilmService:
         self.cache_engine = cache_engine
 
     async def get_by_id(self, film_id: UUID) -> FilmDetail | None:
-
         film = await self.cache_engine.get_by_id("film", film_id, FilmDetail)
         try:
             film_data = await self.search_engine.get_by_id(
@@ -172,12 +171,11 @@ class FilmService:
         return [Film(**get_film) for get_film in films_list]
 
 
-@lru_cache()
+@lru_cache
 def get_film_service(
     redis: Redis = Depends(get_redis),
     elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> FilmService:
-
     redis_cache_engine = RedisCacheEngine(redis)
     cache_engine = BaseCache(redis_cache_engine)
 

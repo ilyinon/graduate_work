@@ -45,7 +45,6 @@ login_data = {"email": user["email"], "password": user["password"]}
 
 async def test_registration(session):
     async with session.post(url_signup, json=user) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
         assert body["email"] == user["email"]
@@ -86,15 +85,12 @@ async def test_registration(session):
     ],
 )
 async def test_register_validation(session, user):
-
     async with session.post(url_signup, json=user) as response:
-
         await response.json()
         assert response.status == http.HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 async def test_check_access_no_token(session):
-
     async with session.get(url_check_access) as response:
         await response.json()
 
@@ -102,9 +98,7 @@ async def test_check_access_no_token(session):
 
 
 async def test_login(session):
-
     async with session.post(url_login, json=login_data) as response:
-
         body = await response.json()
 
         assert response.status == http.HTTPStatus.OK
@@ -113,9 +107,7 @@ async def test_login(session):
 
 
 async def test_check_access_wo_user_role(session):
-
     async with session.post(url_login, json=login_data) as response:
-
         body = await response.json()
         access_token = body["access_token"]
 
@@ -126,9 +118,7 @@ async def test_check_access_wo_user_role(session):
 
 
 async def test_check_access_wo_admin_role(session):
-
     async with session.post(url_login, json=login_data) as response:
-
         body = await response.json()
         access_token = body["access_token"]
 
@@ -139,9 +129,7 @@ async def test_check_access_wo_admin_role(session):
 
 
 async def test_refresh_token(session):
-
     async with session.post(url_login, json=login_data) as response:
-
         body = await response.json()
         refresh_token = body["refresh_token"]
         access_token = body["access_token"]
@@ -179,7 +167,6 @@ async def test_logout(session):
     Login to get access and refresh tokens
     """
     async with session.post(url_login, json=login_data) as response:
-
         body = await response.json()
         refresh_token = body["refresh_token"]
         access_token = body["access_token"]
@@ -190,7 +177,6 @@ async def test_logout(session):
     async with session.post(
         url_logout, headers={"Authorization": f"Bearer {access_token}"}
     ) as response:
-
         await response.json()
         assert response.status == http.HTTPStatus.OK
 

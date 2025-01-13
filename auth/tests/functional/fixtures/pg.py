@@ -1,14 +1,10 @@
-from uuid import UUID, uuid4
-
 import pytest
 from alembic import command
 from alembic.config import Config
-from sqlalchemy import Column, Integer, MetaData, String, Table, create_engine
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import declarative_base, sessionmaker
-from sqlalchemy.sql import text
 from tests.models.base import ModelBase
-from tests.models.user import User
 
 Base = declarative_base()
 

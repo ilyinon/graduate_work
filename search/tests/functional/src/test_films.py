@@ -2,6 +2,7 @@ import http
 import random
 
 import pytest
+
 from tests.functional.settings import settings
 from tests.functional.testdata.movies import MOVIES_DATA
 
@@ -13,7 +14,6 @@ async def test_movies_search(session, es_client, movies_index_create, movies_dat
     url = url_template.format(service_url=settings.app_dsn)
 
     async with session.get(url) as response:
-
         body = await response.json()
 
         assert response.status == http.HTTPStatus.OK
@@ -33,7 +33,6 @@ async def test_get_movie_by_id(
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.OK
 
 
@@ -44,7 +43,6 @@ async def test_movies_search_sort_asc(
     url = url_template.format(service_url=settings.app_dsn)
 
     async with session.get(url) as response:
-
         body = await response.json()
 
         assert response.status == http.HTTPStatus.OK
@@ -58,7 +56,6 @@ async def test_movies_search_sort_desc(
     url = url_template.format(service_url=settings.app_dsn)
 
     async with session.get(url) as response:
-
         body = await response.json()
 
         assert response.status == http.HTTPStatus.OK
@@ -72,7 +69,6 @@ async def test_movies_search_too_huge_page(
     url = url_template.format(service_url=settings.app_dsn)
 
     async with session.get(url) as response:
-
         body = await response.json()
 
         assert response.status == http.HTTPStatus.OK
@@ -85,7 +81,6 @@ async def test_get_movie_by_not_existed_id(session, es_client, movies_index_crea
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.NOT_FOUND
 
 
@@ -95,5 +90,4 @@ async def test_get_movie_by_invalid_id(session, es_client, movies_index_create):
     url = url_template.format(service_url=settings.app_dsn, id=id)
 
     async with session.get(url) as response:
-
         assert response.status == http.HTTPStatus.UNPROCESSABLE_ENTITY

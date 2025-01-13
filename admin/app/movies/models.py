@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email: str, password: str = None) -> "User":
+    def create_user(self, email: str, password: str = None) -> User:
         if not email:
             raise ValueError(_("User must provide an email address."))
 
@@ -19,7 +19,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password: str = None) -> "User":
+    def create_superuser(self, email: str, password: str = None) -> User:
         user = self.create_user(email, password=password)
         user.is_staff = True
         user.save(using=self._db)

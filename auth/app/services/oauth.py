@@ -79,7 +79,6 @@ class OAuthService:
 
     async def get_access_token(self, provider, code, device_id=None):
         if provider == "google":
-
             async with httpx.AsyncClient() as client:
                 token_response = await client.post(
                     auth_settings.google_token_uri,
@@ -158,7 +157,7 @@ class OAuthService:
             return user_info_response.json()
 
 
-@lru_cache()
+@lru_cache
 def get_oauth_service(
     auth_service: AuthService = Depends(get_auth_service),
     user_service: UserService = Depends(get_user_service),

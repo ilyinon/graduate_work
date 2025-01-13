@@ -1,9 +1,10 @@
-from models.base import ModelBase
-from models.mixin import IdMixin, TimestampMixin
 from pydantic import EmailStr
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from models.base import ModelBase
+from models.mixin import IdMixin, TimestampMixin
 
 
 class User(ModelBase, TimestampMixin, IdMixin):

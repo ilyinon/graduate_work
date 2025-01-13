@@ -3,17 +3,19 @@ from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+import httpx
 import requests
 from core.config import purchase_settings
 from core.logger import logger
 from db.pg import get_session
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import HTTPBearer
 from helpers.auth import check_from_auth, take_user_id
 from models.purchase import Purchase, Tariff, User
-from pydantic import BaseModel, Field
-from sqlalchemy import select
-from sqlalchemy.orm import Session
 
 get_token = HTTPBearer(auto_error=False)
 
@@ -29,9 +31,10 @@ class PurchaseRequest(BaseModel):
 async def get_tariffs(
     db: Session = Depends(get_session), credentials: str = Depends(get_token)
 ):
-
     if not await check_from_auth(credentials):
-        raise HTTPException(status_code=403, detail="Доступ запрещён")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Доступ запрещён"
+        )
 
     result = await db.execute(select(Tariff))
     tariffs = result.scalars().all()
@@ -53,10 +56,11 @@ async def create_checkout(
     db: Session = Depends(get_session),
     credentials: str = Depends(get_token),
 ):
-
     logger.info(f"credentials: {credentials}")
     if not await check_from_auth(credentials):
-        raise HTTPException(status_code=403, detail="Доступ запрещён")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Доступ запрещён"
+        )
 
     logger.info(f"request: {request}")
 
@@ -70,7 +74,9 @@ async def create_checkout(
     tariff = result.scalars().first()
 
     if not tariff:
-        raise HTTPException(status_code=404, detail="Тариф не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Тариф не найден"
+        )
 
     amount = tariff.price
 
@@ -93,7 +99,9 @@ async def create_purchase(
 ):
     logger.info(f"request: {request}")
     if not await check_from_auth(credentials):
-        raise HTTPException(status_code=403, detail="Доступ запрещён")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Доступ запрещён"
+        )
 
     user_id = await take_user_id(credentials.credentials)
     promocode = request.promocode
@@ -108,12 +116,16 @@ async def create_purchase(
     logger.info(f"user: {user.id}")
 
     if not user:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Пользователь не найден"
+        )
     result = await db.execute(select(Tariff).where(Tariff.id == tariff_id))
     tariff = result.scalars().first()
 
     if not tariff:
-        raise HTTPException(status_code=404, detail="Тариф не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Тариф не найден"
+        )
 
     amount = tariff.price
 
@@ -145,14 +157,14 @@ async def create_purchase(
         await db.commit()
         if promocode:
             try:
-                response = requests.post(
-                    f"{purchase_settings.promocode_service_url}/apply/{promocode}",
-                    headers=headers,
-                )
-                response.raise_for_status()
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        f"{purchase_settings.promocode_service_url}/apply/{promocode}",
+                        headers=headers,
+                    )
+                    response.raise_for_status()
             except Exception as e:
                 logger.info(f"the error to use promocode: {e}")
-                pass
 
         return {"detail": "Покупка успешно совершена", "amount": amount}
 
@@ -161,27 +173,31 @@ async def create_purchase(
         await db.commit()
         if promocode:
             try:
-                response = requests.post(
-                    f"{purchase_settings.promocode_service_url}/revoke/{promocode}",
-                    headers=headers,
-                )
-                response.raise_for_status()
-            except requests.HTTPError as e:
+                async with httpx.AsyncClient() as client:
+                    response = await client.post(
+                        f"{purchase_settings.promocode_service_url}/revoke/{promocode}",
+                        headers=headers,
+                    )
+                    response.raise_for_status()
+
+            except requests.HTTPError:
                 pass
-        raise HTTPException(status_code=400, detail="Ошибка оплаты")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка оплаты"
+        )
 
 
 async def check_promocode(promocode: str) -> float:
-
     headers = {"Authorization": f"Bearer {purchase_settings.promocode_service_token}"}
 
     if promocode:
         try:
-            response = requests.get(
-                f"{purchase_settings.promocode_service_url}/validate/{promocode}",
-                headers=headers,
-            )
-            response.raise_for_status()
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{purchase_settings.promocode_service_url}/validate/{promocode}",
+                    headers=headers,
+                )
+                response.raise_for_status()
             promocode_data = response.json()
             return promocode_data
 
@@ -190,7 +206,10 @@ async def check_promocode(promocode: str) -> float:
                 detail = e.response.json().get("detail", "Промокод не действует")
             except:
                 detail = "Промокод не действует"
-            raise HTTPException(status_code=400, detail=f"Ошибка промокода: {detail}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Ошибка промокода: {detail}",
+            )
         except Exception as e:
             logger.error(f"promocode service doesn't response: {e}")
         return None
@@ -203,12 +222,12 @@ async def calculate_amount(promocode_data, amount) -> Decimal:
         if discount_percent != 0:
             amount *= 1 - discount_percent / 100
             logger.info(
-                f"discount_percent: promocode {promocode_data["promocode"]}, {discount_percent}, amount {amount}"
+                f"discount_percent: promocode {promocode_data['promocode']}, {discount_percent}, amount {amount}"
             )
         if fixed_discount != 0:
             amount -= fixed_discount
             logger.info(
-                f"fixed_discount: promocode {promocode_data["promocode"]}, {fixed_discount}, amount {amount}"
+                f"fixed_discount: promocode {promocode_data['promocode']}, {fixed_discount}, amount {amount}"
             )
         amount = Decimal(max(round(amount), 0))
     return amount

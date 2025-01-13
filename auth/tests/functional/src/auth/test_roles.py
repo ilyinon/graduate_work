@@ -5,10 +5,6 @@ from faker import Faker
 from tests.functional.settings import test_settings
 
 pytestmark = pytest.mark.asyncio
-from sqlalchemy import create_engine, select
-from tests.models.role import Role, UserRole
-from tests.models.session import Session
-from tests.models.token import Token
 from tests.models.user import User
 
 fake = Faker()
@@ -45,7 +41,6 @@ admin_login_data = {
 
 
 async def test_get_all_roles_wo_creds(session, get_db):
-
     user = User(
         email=admin_login_data["email"],
         password=admin_login_data["password"],
@@ -57,7 +52,6 @@ async def test_get_all_roles_wo_creds(session, get_db):
     get_db.refresh(user)
 
     async with session.get(url_roles) as response:
-
         assert response.status == http.HTTPStatus.UNPROCESSABLE_ENTITY
 
 
@@ -67,11 +61,9 @@ async def test_get_all_roles_not_admin(session, get_db):
 
     assert result.email == admin_login_data["email"]
     async with session.post(url_signup, json=admin_login_data) as response:
-
         body = await response.json()
 
     async with session.post(url_login, json=admin_login_data) as response:
-
         body = await response.json()
         access_token = body["access_token"]
 

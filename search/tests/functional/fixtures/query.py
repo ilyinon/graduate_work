@@ -1,11 +1,8 @@
 pytest_plugins = "tests.fixtures"
 
-import asyncio
 import json
 
-import aiohttp
 import pytest
-import pytest_asyncio
 from elasticsearch import Elasticsearch
 from redis.asyncio import Redis
 

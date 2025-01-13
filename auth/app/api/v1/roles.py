@@ -34,14 +34,12 @@ async def list_roles(
     role_service: RoleService = Depends(get_role_service),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> Union[List[RoleResponse], HTTPExceptionResponse]:
-
     if access_token:
         logger.info(f"Check access for {access_token.credentials}")
 
         if await auth_service.check_access_with_roles(
             access_token.credentials, roles_with_allowed
         ):
-
             return await role_service.list_roles()
 
         raise HTTPException(

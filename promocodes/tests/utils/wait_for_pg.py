@@ -19,5 +19,4 @@ def wait_for_pg():
 
 
 if __name__ == "__main__":
-
     wait_for_pg()

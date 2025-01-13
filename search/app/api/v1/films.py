@@ -124,7 +124,6 @@ async def search_film(
 async def genre_details(
     film_id: UUID, film_service: FilmService = Depends(get_film_service)
 ) -> FilmDetailResponse:
-
     film_detail = await film_service.get_by_id(film_id)
 
     if not film_detail:

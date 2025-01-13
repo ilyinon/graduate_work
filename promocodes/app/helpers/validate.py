@@ -21,30 +21,42 @@ async def _validate_promocode(promocode, session):
 
     if not promocode:
         logger.info(f"Promocode {promocode} is not exist")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Промокод не найден")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Промокод не найден"
+        )
     if not promocode.is_active:
         logger.info(f"Promocode {promocode} is not active")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Промокод неактивен")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Промокод неактивен"
+        )
     if promocode.start_date.replace(
         tzinfo=datetime.timezone.utc
     ) and datetime.datetime.now(datetime.timezone.utc) < promocode.start_date.replace(
         tzinfo=datetime.timezone.utc
     ):
         logger.info(f"Promocode {promocode} has start date in future")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Промокод еще не активен")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Промокод еще не активен"
+        )
     if promocode.end_date.replace(
         tzinfo=datetime.timezone.utc
     ) and datetime.datetime.now(datetime.timezone.utc) > promocode.end_date.replace(
         tzinfo=datetime.timezone.utc
     ):
         logger.info(f"Promocode {promocode} has expired date")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Срок действия промокода истек")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Срок действия промокода истек",
+        )
     if promocode.is_one_time and promocode.used_count >= 1:
         logger.info(f"Promocode {promocode} is onetime and has been used")
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Промокод уже использован")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Промокод уже использован"
+        )
     if promocode.usage_limit and promocode.used_count >= promocode.usage_limit:
         logger.info(f"Promocode {promocode} reached limits of using")
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Достигнут лимит использований промокода"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Достигнут лимит использований промокода",
         )
     return promocode

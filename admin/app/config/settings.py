@@ -96,7 +96,7 @@ TEMPLATES = [
         },
     },
 ]
-AUTH_API_LOGIN_URL = f'http://{os.environ.get("AUTH_API_HOST")}:{os.environ.get("AUTH_API_PORT")}/api/v1/auth/login'
+AUTH_API_LOGIN_URL = f"http://{os.environ.get('AUTH_API_HOST')}:{os.environ.get('AUTH_API_PORT')}/api/v1/auth/login"
 
 WSGI_APPLICATION = "config.wsgi.application"
 

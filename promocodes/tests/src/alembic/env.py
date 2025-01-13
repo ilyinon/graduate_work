@@ -3,7 +3,6 @@
 from alembic import context
 from models.base import ModelBase
 from sqlalchemy import engine_from_config, pool
-
 from tests.functional.settings import test_settings
 
 config = context.config
@@ -51,7 +50,6 @@ def run_migrations_online() -> None:
         context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
-
             context.run_migrations()
 
 

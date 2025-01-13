@@ -214,7 +214,6 @@ def get_person_service(
     redis: Redis = Depends(get_redis),
     elastic: AsyncElasticsearch = Depends(get_elastic),
 ) -> PersonService:
-
     redis_cache_engine = RedisCacheEngine(redis)
     cache_engine = BaseCache(redis_cache_engine)
 

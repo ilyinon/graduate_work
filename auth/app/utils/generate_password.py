@@ -3,7 +3,6 @@ import string
 
 
 def generate_password(length=12):
-
     lowercase = string.ascii_lowercase
     characters = lowercase
 

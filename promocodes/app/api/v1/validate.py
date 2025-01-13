@@ -1,6 +1,7 @@
+from fastapi import APIRouter, Depends
+
 from core.logger import logger
 from db.pg import get_session_local
-from fastapi import APIRouter, Depends
 from helpers.auth import get_current_user
 from helpers.validate import _validate_promocode
 

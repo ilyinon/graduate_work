@@ -1,7 +1,7 @@
-from core.config import purchase_settings
-from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
-                                    create_async_engine)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
+
+from core.config import purchase_settings
 
 Base = declarative_base()
 

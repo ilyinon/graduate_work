@@ -1,10 +1,11 @@
-from core.logger import logger
-from db.pg import get_session
 from fastapi import APIRouter, Depends, HTTPException, status
-from helpers.auth import get_current_user
-from models.promocodes import Promocodes
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from core.logger import logger
+from db.pg import get_session
+from helpers.auth import get_current_user
+from models.promocodes import Promocodes
 
 router = APIRouter()
 

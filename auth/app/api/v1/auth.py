@@ -160,7 +160,6 @@ async def refresh_tokens(
                 logger.info(f"get user to refresh: {user}")
 
                 if user:
-
                     tokens = await auth_service.refresh_tokens(refresh_token)
                     add_session = {
                         "user_id": UUID(decoded_token["user_id"]),

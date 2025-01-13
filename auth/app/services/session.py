@@ -65,7 +65,6 @@ class SessionService:
 def get_session_service(
     db_session: AsyncSession = Depends(get_session),
 ) -> SessionService:
-
     db_engine = PostgresqlEngine(db_session)
     base_db = BaseDb(db_engine)
     return SessionService(base_db)

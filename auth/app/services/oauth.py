@@ -79,7 +79,6 @@ class OAuthService:
 
     async def get_access_token(self, provider, code, device_id=None):
         if provider == "google":
-
             async with httpx.AsyncClient() as client:
                 token_response = await client.post(
                     auth_settings.google_token_uri,

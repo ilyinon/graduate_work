@@ -2,7 +2,6 @@ import http
 
 import pytest
 from faker import Faker
-
 from tests.functional.settings import test_settings
 
 fake = Faker()
@@ -82,7 +81,6 @@ async def test_validate_promocode(session):
     async with session.get(
         f"{url_validate}/{WORK_PROMOCODE}", headers=auth_headers
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
         assert body == {
@@ -96,14 +94,12 @@ async def test_invalid_promocode(session):
     async with session.get(
         f"{url_validate}/{NOT_WORK_PROMOCODE}", headers=auth_headers
     ) as response:
-
         await response.json()
         assert response.status == http.HTTPStatus.NOT_FOUND
 
 
 async def test_list_promocodes(session):
     async with session.get(url_list, headers=auth_headers) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
         promocode_id = body[0]["id"]
@@ -114,7 +110,6 @@ async def test_apply_promocode(session):
     async with session.post(
         f"{url_apply}/{WORK_PROMOCODE}", headers=auth_headers
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
 
@@ -123,7 +118,6 @@ async def test_apply_invalid_promocode(session):
     async with session.post(
         f"{url_apply}/{NOT_WORK_PROMOCODE}", headers=auth_headers
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.NOT_FOUND
 
@@ -132,7 +126,6 @@ async def test_revoke_promocode(session):
     async with session.post(
         f"{url_revoke}/{WORK_PROMOCODE}", headers=auth_headers
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
 
@@ -141,7 +134,6 @@ async def test_revoke_invalid_promocode(session):
     async with session.post(
         f"{url_revoke}/{NOT_WORK_PROMOCODE}", headers=auth_headers
     ) as response:
-
         await response.json()
         assert response.status == http.HTTPStatus.NOT_FOUND
 
@@ -150,7 +142,6 @@ async def test_generate_promocode(session):
     async with session.post(
         f"{url_generate}", headers=auth_headers, json=working_generate
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.OK
         assert body["is_active"] == True
@@ -164,15 +155,12 @@ async def test_invalid_generate_promocode(session):
     async with session.post(
         f"{url_generate}", headers=auth_headers, json=not_working_generate
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.UNPROCESSABLE_ENTITY
 
 
 async def test_assign_promocode(session):
-
     async with session.post(url_signup, json=user) as response:
-
         await response.json()
 
     async with session.post(url_login, json=user) as response:
@@ -186,7 +174,6 @@ async def test_assign_promocode(session):
         user_email = body["email"]
 
     async with session.get(url_list, headers=auth_headers) as response:
-
         body = await response.json()
         promocode_name = body[0]["promocode"]
 
@@ -195,7 +182,6 @@ async def test_assign_promocode(session):
     async with session.post(
         f"{url_assign}", headers=auth_headers, json=assign_promocode
     ) as response:
-
         body = await response.json()
         assert response.status == http.HTTPStatus.NOT_FOUND
         # The problem is to use the same Auth DB where user is present

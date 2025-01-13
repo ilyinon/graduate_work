@@ -69,7 +69,6 @@ class AuthService:
     async def create_tokens(
         self, user: User, is_exist: bool = True, user_data={}
     ) -> TwoTokens:
-
         access_token = await self.create_token(user_data, False)
         logger.info(f"access token is {access_token}")
 
@@ -270,7 +269,6 @@ def get_auth_service(
     db_session: AsyncSession = Depends(get_session),
     redis: Redis = Depends(get_redis),
 ) -> AuthService:
-
     db_engine = PostgresqlEngine(db_session)
     base_db = BaseDb(db_engine)
     return AuthService(base_db, redis)

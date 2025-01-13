@@ -1,13 +1,14 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
 from core.logger import logger
 from db.pg import get_session, get_session_local
-from fastapi import APIRouter, Depends, HTTPException, status
 from helpers.auth import get_current_user
 from helpers.validate import _validate_promocode
 from models.promocodes import UserPromocodes
 from models.users import User
 from schemas.promocodes import ApplyPromocodeRequest, ApplyPromocodeResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 
 router = APIRouter()
 

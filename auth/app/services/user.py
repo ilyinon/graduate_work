@@ -153,7 +153,6 @@ class UserService:
 
 @lru_cache
 def get_user_service(db_session: AsyncSession = Depends(get_session)) -> UserService:
-
     db_engine = PostgresqlEngine(db_session)
     base_db = BaseDb(db_engine)
     return UserService(base_db)

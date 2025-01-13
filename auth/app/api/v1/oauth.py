@@ -107,14 +107,12 @@ async def login_callback(
         raise HTTPException(status_code=400, detail="Invalid OAuth provider")
 
     if provider == "google":
-
         user_info = await oauth_service.get_access_token(provider, code)
         logger.info(f"user_info: {user_info}")
         user_email = user_info.get("email")
         social_account_id = user_info.get("id")
 
     elif provider == "yandex":
-
         data = await oauth_service.get_access_token(provider, code)
         user_email = data["default_email"]
         social_account_id = data.get("id")

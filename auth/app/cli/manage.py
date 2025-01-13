@@ -21,7 +21,6 @@ async def get_user_by_email(db: AsyncSession, email: str) -> UUID:
 
 
 async def create_user_by_email(db: AsyncSession, email: str) -> bool:
-
     username = typer.prompt("Enter username for a new user")
     full_name = f"admin {username}"
     password = typer.prompt(

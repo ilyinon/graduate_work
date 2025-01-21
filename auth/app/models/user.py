@@ -5,6 +5,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from models.base import ModelBase
 from models.mixin import IdMixin, TimestampMixin
+from models.session import Session
+from models.token import Token
 
 
 class User(ModelBase, TimestampMixin, IdMixin):
@@ -18,13 +20,11 @@ class User(ModelBase, TimestampMixin, IdMixin):
     roles = relationship("UserRole", back_populates="user", lazy="selectin")
 
     sessions = relationship(
-        "Session", back_populates="user", lazy="selectin", cascade="all, delete-orphan"
+        "Session", back_populates="user", cascade="all, delete-orphan"
     )
     tokens = relationship(
-        "Token", back_populates="user", lazy="selectin", cascade="all, delete-orphan"
+        "Token", back_populates="user", cascade="all, delete-orphan"
     )
-    # user_promocodes = relationship(
-    #     "UserPromocode", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
 
     social_accounts = relationship(
         "UserSocialAccount",
